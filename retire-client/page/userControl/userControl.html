@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>菜单管理</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+	<link rel="stylesheet" href="../../css/formSelects-v4.css" />
+</head>
+<body class="childrenBody">
+<form class="layui-form"  id="formid">
+	<blockquote class="layui-elem-quote quoteBox">
+		<form class="layui-form">
+			<div class="layui-inline">
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input searchVal" name="USER_NAME" placeholder="请输入用户名称" maxlength="15" />
+				</div>
+				<!-- <div class="layui-input-inline" style="width: 550px;">
+					<select lay-filter="filterMenuType" name="DEP_ID" id="DEP_ID" placeholder="部门" xm-select="select15" style="width: 550px;">
+					</select>
+				</div> -->
+				<div class="layui-input-inline" style="width: 550px;">
+					<select xm-select="example11_1" style="width: 550px;" xm-select-show-count="2" name="DEP_ID">
+						<option value="">选择部门</option>
+					</select>
+				</div>
+				<div class="layui-input-inline">
+					<input type="text" class="layui-input searchVal" name="LOGIN_NAME" placeholder="登录名称" maxlength="15" />
+				</div>
+				<a class="layui-btn search_btn" data-type="reload">搜索</a>
+			</div>
+		</form>
+	</blockquote>
+	<table id="newsList" lay-filter="newsList"></table>
+	<!--操作-->
+	<script type="text/html" id="newsListBar">
+		<a class="layui-btn layui-btn-xs" lay-event="userContro">用户操作权限设置</a>
+		<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="resetPwd">重置密码</a>
+		<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="userRole">用户角色设置</a>
+		<a class="layui-btn layui-btn-xs" lay-event="enable">启用</a>
+		<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="prohibit">禁用</a>
+	</script>
+</form>
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/userControl/userControl.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>离退休人员登记</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form"  id="formid">
+	<blockquote class="layui-elem-quote quoteBox">
+		<div class="layui-inline">
+			<div class="layui-input-inline">
+				<select id="unit_id" name="unit_id" lay-filter="unit_id">
+					<option value="">全部</option>
+				</select>
+			</div>
+
+			<div class="layui-input-inline">
+				<input type="text" class="layui-input input-date" id="start_retire_time" name="start_retire_time" maxlength="10" placeholder="退休时间" >
+			</div>
+			至
+			<div class="layui-input-inline">
+				<input type="text" class="layui-input input-date" id="end_retire_time" name="end_retire_time" maxlength="10" placeholder="退休时间">
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" class="layui-input search-identity" name="userNameOrIdcard" placeholder="请输入姓名或身份证" maxlength="18" />
+			</div>
+			<a class="layui-btn search_btn" data-type="reload">搜索</a>
+			<a class="layui-btn layui-btn-normal" id="addUser">添加</a>
+			<a class="layui-btn layui-btn-normal" id="impExcel">导入Excel</a>
+
+			<div class="layui-input-inline">
+				<select id="sex_id" name="sex_id" lay-filter="sex_id">
+					<option value="">性别</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="nation_id" name="nation_id" lay-filter="nation_id">
+					<option value="">民族</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="marital_status_id" name="marital_status_id" lay-filter="marital_status_id">
+					<option value="">婚姻状况</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="education_id" name="education_id" lay-filter="education_id">
+					<option value="">最高学历</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="politics_status_id" name="politics_status_id" lay-filter="politics_status_id">
+					<option value="">政治面貌</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="retire_type_id" name="retire_type_id" lay-filter="retire_type_id">
+					<option value="">离退休类型</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="retire_nature_id" name="retire_nature_id" lay-filter="retire_nature_id">
+					<option value="">退休性质</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="retirement_rank_id" name="retirement_rank_id" lay-filter="retirement_rank_id">
+					<option value="">离退休职级</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="now_treatment_level_id" name="now_treatment_level_id" lay-filter="now_treatment_level_id">
+					<option value="">现享受待遇级别</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="archives_area_id" name="archives_area_id" lay-filter="archives_area_id">
+					<option value="">人事档案存放地</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="receive_area_id" name="receive_area_id" lay-filter="receive_area_id">
+					<option value="">接收地</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="health_status" name="health_status" lay-filter="health_status">
+					<option value="">健康状况</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<select id="play_a_role_ids" name="play_a_role_ids" lay-filter="play_a_role_ids">
+					<option value="">发挥作用情况</option>
+				</select>
+			</div>
+			<div class="layui-input-block">
+				<select name="play_a_role_ids" xm-select="play_a_role_ids" lay-filter="play_a_role_ids">
+					<option value="">发挥作用情况</option>
+				</select>
+			</div>
+		</div>
+		</div>
+	</blockquote>
+	<table id="userList" lay-filter="userList"></table>
+	<div id="pagediv"></div>
+	<!--操作-->
+	<script type="text/html" id="userListBar">
+		<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="update">修改</a>
+		<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+	</script>
+</form>
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/retireUser/retireUserList.js"></script>
+<!-- <script type="text/javascript" src="../../js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.placeholder.min.js"></script> -->
+</body>
+</html>

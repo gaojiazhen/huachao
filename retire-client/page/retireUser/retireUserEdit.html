@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>离退休人员登记</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+	<link rel="stylesheet" href="../../css/formSelects-v4.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" action="">
+<div class="layui-fluid">
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>单位</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="unit_id" autocomplete="off" >
+					<option value="">请选择</option>
+				</select>
+				<input type="hidden" id="unit_id" />
+			</div>
+		</div>	
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="required" name="user_name" class="layui-input" 
+				placeholder="请输入姓名" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>性别</label>
+			<div class="layui-input-inline" id="sexDiv">
+			</div>
+			<input type="hidden" id="sex_id"/>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>身份号码</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="required|identity" id="idcard" name="idcard" class="layui-input"
+					   placeholder="请输入身份证号码" maxlength="18" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>出生年月</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="required" id="birth_date" name="birth_date" class="layui-input" 
+				placeholder="请选择时间" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>民族</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="nation_id" >
+					<option value="">请选择</option>
+				</select>
+			</div>
+			<input type="hidden" id="nation_id" />
+		</div>
+
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>婚姻状况</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="marital_status_id" autocomplete="off">
+					<option value="">请选择</option>
+				</select>
+				<input type="hidden" id="marital_status_id" />
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>最高学历</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="education_id">
+					<option value="">请选择</option>
+				</select>
+			</div>
+			<input type="hidden" id="education_id" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>籍贯</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="required" name="native_place" class="layui-input"
+					   placeholder="请输入籍贯" maxlength="20" autocomplete="off" >
+			</div>
+		</div>
+
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md6 layui-col-xs6">
+			<label class="layui-form-label">户口所在地</label>
+			<div class="layui-input-block">
+				<input type="text" lay-verify="required" id="registered_permanent_residence" name="registered_permanent_residence" class="layui-input"
+				placeholder="请输入户口所在地" maxlength="200" autocomplete="off">
+			</div>
+		</div>
+		<div class="layui-col-md6 layui-col-xs6">
+			<label class="layui-form-label">现居住地</label>
+			<div class="layui-input-block">
+				<input type="text" lay-verify="required" id="residence_address" name="residence_address" class="layui-input"
+				placeholder="请输入现居住地详细地址" maxlength="200" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>参加工作时间</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="required" id="work_time" name="work_time" class="layui-input" 
+				placeholder="请选择时间" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>离退休时间</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="required" id="retire_time" name="retire_time" class="layui-input" 
+				placeholder="请选择时间" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>政治面貌</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="politics_status_id" lay-filter="politics_status_id">
+					<option value="">请选择</option>
+				</select>
+			</div>
+			<input type="hidden" id="politics_status_id" />
+			<input type="hidden" id="politics_status_special_mark" />
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>离退休类型</label>
+			<div class="layui-input-inline" id="retireTypeDiv">
+			</div>
+			<input type="hidden" id="retire_type_id" />
+			<input type="hidden" id="retire_type_id_special_mark" />
+		</div>
+		<div class="layui-col-md8 layui-col-xs8">
+			<label class="layui-form-label"><font style="color:red">*</font>退休性质</label>
+			<div class="layui-input-inline" id="retireNatureDiv">
+			</div>
+			<input type="hidden" id="retire_nature_id" />
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">离退休岗位及职务</label>
+			<div class="layui-input-inline">
+				<input  lay-verify="required" type="text" name="for_retirees" class="layui-input"
+				placeholder="请输入离退休岗位及职务" maxlength="100" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">专业技术职务</label>
+			<div class="layui-input-inline">
+				<input lay-verify="required"  type="text" id="technical_posts" name="technical_posts" class="layui-input"
+				placeholder="请输入专业技术职务" maxlength="100" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>离退休职级</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="retirement_rank_id">
+					<option value="">请选择</option>
+				</select>
+			</div>
+			<input type="hidden" id="retirement_rank_id" />
+		</div>
+	</div>	
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>现享受待遇级别</label>
+			<div class="layui-input-inline">
+				<select lay-verify="required" name="now_treatment_level_id">
+					<option value="">请选择</option>
+				</select>
+			</div>
+			<input type="hidden" id="now_treatment_level_id" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">待遇批准时间</label>
+			<div class="layui-input-inline">
+				<input lay-verify="required"  type="text" class="layui-input" id="treatment_approval_time" name="treatment_approval_time"
+				placeholder="请选择时间" maxlength="10" autocomplete="off">
+			</div>
+		</div>
+        <div class="layui-col-md4 layui-col-xs4">
+            <label class="layui-form-label">待遇批准文号</label>
+            <div class="layui-input-inline">
+                <input lay-verify="required"  type="text" class="layui-input" id="treatment_approval_typenumber" name="treatment_approval_typenumber"
+                       placeholder="请选输入待遇批准文号" maxlength="200" autocomplete="off">
+            </div>
+        </div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">离退休安置地</label>
+			<div class="layui-input-inline">
+				<input  lay-verify="required" type="text" class="layui-input" id="retirement_settlement" name="retirement_settlement"
+				placeholder="请选输入离退休安置地" maxlength="200" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">	
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">安置情况</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_earthly_place" value="1" title="属地安置" 
+					lay-filter="is_earthly_place" autocomplete="off" >
+				<input type="radio" name="is_earthly_place" value="5" title="异地安置" 
+					lay-filter="is_earthly_place" autocomplete="off" checked="checked">
+			</div>
+			<input type="hidden" id="is_earthly_place" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否在京</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_beijing" value="1" title="是" 
+					lay-filter="is_beijing" autocomplete="off" >
+				<input type="radio" name="is_beijing" value="0" title="否" 
+					lay-filter="is_beijing" autocomplete="off" checked="checked">
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否养老金社会化发放</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_socialized_pension" value="1" title="是" 
+					lay-filter="is_socialized_pension" autocomplete="off" >
+				<input type="radio" name="is_socialized_pension" value="0" title="否" 
+					lay-filter="is_socialized_pension" autocomplete="off" checked="checked" >
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否参加属地医疗保险</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_medical_insurance" value="1" title="是" 
+					lay-filter="is_medical_insurance" autocomplete="off" >
+				<input type="radio" name="is_medical_insurance" value="0" title="否" 
+					lay-filter="is_medical_insurance" autocomplete="off"  checked="checked">
+			</div>
+		</div>	
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">银行卡及卡号</label>
+			<div class="layui-input-inline">
+				<input lay-verify="required" type="text" class="layui-input" id="bank_card_number" name="bank_card_number"
+				placeholder="请输入银行卡及卡号" maxlength="100" autocomplete="off">
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否有子女在系统工作</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="child_working_sys" value="1" title="是" 
+					lay-filter="child_working_sys" autocomplete="off" >
+				<input type="radio" name="child_working_sys" value="0" title="否" 
+					lay-filter="child_working_sys" autocomplete="off"  checked="checked">
+			</div>
+		</div>
+		<div class="layui-row">
+			<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>手机号</label>
+						<div class="layui-input-inline">
+							<input type="text" lay-verify="required" id="phone" name="phone" class="layui-input" 
+							placeholder="请输入手机号" maxlength="11" autocomplete="off">
+						</div>
+			</div>
+		<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>固定电话</label>
+						<div class="layui-input-inline">
+							<input type="text" lay-verify="required" id="area_code" name="area_code" class="layui-input input-date" 
+							placeholder="区号" maxlength="8" autocomplete="off">
+						</div>
+						&nbsp;+&nbsp;
+						<div class="layui-input-inline">
+							<input type="text" lay-verify="required" id="landline" name="landline" class="layui-input" 
+							placeholder="电话" maxlength="30" autocomplete="off">
+						</div>
+		</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">社保关系所在地</label>
+			<div class="layui-input-inline">
+				<input lay-verify="required" type="text" name="social_security_area" class="layui-input"
+				placeholder="请输入社保关系所在地" maxlength="100" autocomplete="off">
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">人事档案存放地</label>
+			<div class="layui-input-inline" id="archives_area_div" >
+			</div>
+			<input  type="hidden" id="archives_area_id"/>
+		</div>
+
+		<div class="layui-col-md4 layui-col-xs4 companies_place ">
+			<label class="layui-form-label">接收地</label>
+			<div class="layui-input-inline" id="receive_area_div">
+			</div>
+			<input type="hidden" id="receive_area_id" />
+		</div>
+
+
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md8 layui-col-xs8">
+			<label class="layui-form-label">接收地详细地址</label>
+			<div class="layui-input-block">
+				<input type="text" id="receive_area_address" name="receive_area_address" class="layui-input" 
+				placeholder="请输入接收地详细地址" maxlength="200" autocomplete="off">
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">档案册数</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="integer" id="archives_book_number" name="archives_book_number" class="layui-input" 
+				placeholder="请输入档案册数" maxlength="2" autocomplete="off"> 
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>健康状况</label>
+			<div class="layui-input-inline">
+				<select name="health_status" lay-filter="health_status" lay-verify="required">
+					<option value="">请选择</option>
+				</select>
+			</div>
+			<input type="hidden" id="health_status" />
+			<input type="hidden" id="health_status_special_mark" />
+		</div>
+		<!-- 以下两个同时只会出现一个 -->
+		<div class="layui-col-md4 layui-col-xs4" id="deceased_time_div">
+			<label class="layui-form-label"><font style="color:red">*</font>已故时间</label>
+			<div class="layui-input-inline">
+				<input type="text" id="deceased_time" name="deceased_time" class="layui-input" 
+				placeholder="请选择时间" maxlength="10" autocomplete="off">
+			</div>
+		</div>
+		<div class="layui-col-md8 layui-col-xs8" id="health_status_details_div">
+			<label class="layui-form-label"><font style="color:red">*</font>健康状况详情</label>
+			<div class="layui-input-block">
+				<input type="text" id="health_status_details" name="health_status_details" class="layui-input" 
+				placeholder="请输入健康状况详情" maxlength="500" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md8 layui-col-xs8">
+			<label class="layui-form-label"><font style="color:red">*</font>发挥作用情况</label>
+			<div class="layui-input-block">
+				<select name="play_a_role_ids" xm-select="play_a_role_ids" lay-verify="required">
+					<option value="">请选择</option>
+				</select>
+			</div>
+ 			<input type="hidden" id="play_a_role_ids" />
+			<input type="hidden" id="play_a_role_ids_special_mark" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4" id="play_a_role_specific_div">
+			<label class="layui-form-label"><font style="color:red">*</font>发挥作用具体情况</label>
+			<div class="layui-input-inline">
+				<input type="text" id="play_a_role_specific" name="play_a_role_specific" class="layui-input" 
+				placeholder="请输入发挥作用具体情况" maxlength="100" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否电力系统双职工</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_system_employees" value="1" title="是" 
+					lay-filter="is_system_employees" autocomplete="off" >
+				<input type="radio" name="is_system_employees" value="0" title="否" 
+					lay-filter="is_system_employees" autocomplete="off" checked="checked">
+				<input type="hidden" id="is_system_employees" />
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="spouse_name" class="layui-input"
+				placeholder="请输入配偶姓名" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+
+        <div class="layui-col-md4 layui-col-xs4 spouse_info">
+            <label class="layui-form-label"><font style="color:red">*</font>退休单位</label>
+            <div class="layui-input-inline">
+                <select name="spouse_unit" autocomplete="off" lay-filter="spouse_unit">
+                    <option value="">请选择</option>
+                </select>
+                <input type="hidden" id="spouse_unit" />
+            </div>
+        </div>
+
+    </div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>退休部门及职务</label>
+			<div class="layui-input-inline">
+				<input type="text" name="spouse_duty" class="layui-input"
+				placeholder="请输入退休部门及职务" maxlength="100" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶联系方式</label>
+			<div class="layui-input-inline">
+				<input type="text" id="spouse_contact" name="spouse_contact" class="layui-input" 
+				placeholder="请输入配偶联系方式" maxlength="100" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否先模人员</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_model_personnel" value="1" title="是" 
+					lay-filter="is_model_personnel" autocomplete="off" >
+				<input type="radio" name="is_model_personnel" value="0" title="否" 
+					lay-filter="is_model_personnel" autocomplete="off" checked="checked">
+			</div>
+			<input type="hidden" id="is_model_personnel"/>
+		</div>	
+	</div>	
+	<div class="layui-row" >
+		<div class="layui-col-md4 layui-col-xs4 honor_info">
+			<label class="layui-form-label"><font style="color:red">*</font>所获荣誉</label>
+			<div class="layui-input-inline">
+				<input type="text" name="honor" class="layui-input" 
+				placeholder="请输入所获荣誉" maxlength="500" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 honor_info">
+			<label class="layui-form-label"><font style="color:red">*</font>授奖单位</label>
+			<div class="layui-input-inline">
+				<input type="text" id="prizes_department" name="prizes_department" class="layui-input" 
+				placeholder="请输入授奖单位" maxlength="200" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 honor_info">
+			<label class="layui-form-label"><font style="color:red">*</font>奖项级别</label>
+			<div class="layui-input-inline">
+				<select name="award_level_id">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<input type="hidden" id="award_level_id" />
+	</div>
+	<div class="layui-row" >
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">是否军转干部</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="is_soldier_cadre" value="1" title="是" 
+					lay-filter="is_soldier_cadre" autocomplete="off">
+				<input type="radio" name="is_soldier_cadre" value="0" title="否" 
+					lay-filter="is_soldier_cadre" autocomplete="off" >
+			</div>
+			<input type="hidden" id="is_soldier_cadre"/>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 soldier_cadre">
+			<label class="layui-form-label"><font style="color:red">*</font>转业时军职级</label>
+			<div class="layui-input-inline">
+				<input type="text" name="military_level" class="layui-input"
+				placeholder="请输入转业时军职级" maxlength="100" autocomplete="off" >
+			</div>
+		</div>
+	</div>
+	<div class="layui-row" >
+		<div class="layui-col-md12 layui-col-xs12">
+			<label class="layui-form-label">特殊人群标识</label>
+			<div class="layui-input-block">
+				<select name="special_crowd_ids" xm-select="special_crowd_ids">
+					<option value="">请选择</option>
+				</select>
+			</div>
+ 			<input type="hidden" id="special_crowd_ids" />
+		</div>
+	</div>	
+	<div class="layui-row" >
+		<div class="layui-col-md12 layui-col-xs12">
+			<label class="layui-form-label">特殊情况具体说明</label>
+			<div class="layui-input-block">
+				<textarea name="special_remark" placeholder="请输入特殊情况具体说明" class="layui-textarea" maxlength="1000" autocomplete="off"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="layui-row" >
+		<div class="layui-col-md12 layui-col-xs12">
+			<label class="layui-form-label">家庭主要成员及重要社会关系情况</label>
+			<div class="layui-input-block">
+				<table id="familyList" class="edit-table">
+					<tr>
+						<th width="8%"><font style="color:red">*</font>称谓</th>
+						<th width="8%"><font style="color:red">*</font>姓名</th>
+						<th width="8%">年龄</th>
+						<th>工作单位及职务</th>
+						<th width="15%"><font style="color:red">*</font>联系方式</th>
+						<th width="15%">备注</th>
+						<th width="6%"><a class="layui-btn layui-btn-xs layui-btn-normal" id="addFamily">添加</a></th>
+					</tr>
+					<tbody id="familyTbody">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</tr>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-input-block" align="center">
+			<input type="hidden" name="id" />
+			<input type="hidden" name="create_user_id" />
+			<input type="hidden" name="modified_user_id" />
+			<input type="button" value="保存" lay-filter="saveUser" lay-submit class="layui-btn layui-btn-normal" />
+			<input type="button" id="saveUserEditQuitRetire" value="保存并填写离休信息" lay-filter="saveUserEditQuitRetire" 
+			lay-submit class="layui-btn layui-btn-normal" />
+			<input type="button" id="saveUserEditCommunist" value="保存并中共党员登记" lay-filter="saveUserEditCommunist" 
+			lay-submit class="layui-btn layui-btn-normal" />
+			<input type="button" class="layui-btn layui-btn-primary" value="关闭" id="closeWindow"/>
+		</div>
+	</div>
+</div>	
+</form> 
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/retireUser/retireUserEdit.js"></script>
+</body>
+</html>

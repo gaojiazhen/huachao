@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>中共党员登记</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no">
+		<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="../../css/public.css" media="all" />
+	</head>
+	<body class="childrenBody">
+		<form class="layui-form" action="">
+			<div class="layui-fluid">
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label">姓名</label>
+						<label class="layui-form-label" id="user_name"></label>
+					</div>
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label">性别</label>
+						<label class="layui-form-label" id="sex_name"></label>
+					</div>
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label">身份证号码</label>
+						<label class="layui-form-label" id="idcard"></label>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>人员类别</label>
+						<div class="layui-input-inline">
+							<input type="radio" name="category_personnel" value="1" title="正式党员" lay-verify="required" autocomplete="off" checked="checked">
+						</div>
+					</div>
+					<div class="layui-col-md8 layui-col-xs8">
+						<div class="layui-form-item">
+							<label class="layui-form-label"><font style="color:red">*</font>所在党支部</label>
+							<div class="layui-input-block">
+								<input type="text" name="party_branch" class="layui-input" placeholder="请输入所在党支部（填写全称）" maxlength="150" lay-verify="required" autocomplete="off">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>加入党组织日期</label>
+						<div class="layui-input-inline">
+							<input type="text" lay-verify="required" id="gmt_party" name="gmt_party" class="layui-input" placeholder="请选择时间" maxlength="10" autocomplete="off">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>转为正式党员日期</label>
+						<div class="layui-input-inline">
+							<input type="text" lay-verify="required" id="gmt_become" name="gmt_become" class="layui-input" placeholder="请选择时间" maxlength="10" autocomplete="off">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label">工作岗位</label>
+						<div class="layui-input-inline">
+							<input type="radio" name="operating_post" value="退休人员" title="退休人员" autocomplete="off" checked="checked">
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md6 layui-col-xs6">
+						<label class="layui-form-label"><font style="color:red">*</font>组织关系所在单位
+							<input type="hidden" id="membership_credentials_id" />
+							<input type="hidden" id="membership_credentials_mark" /></label>
+						<div class="layui-input-inline" id="partyLocatedDiv">
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>党籍状态</label>
+						<div class="layui-input-inline">
+							<input type="radio" name="party_membership" value="1" title="正常" lay-filter="party_membership" autocomplete="off" checked="checked">
+							<input type="radio" name="party_membership" value="0" title="不正常" lay-filter="party_membership" autocomplete="off">
+						</div>
+						<input type="hidden" id="party_membership" />
+					</div>
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label">现任党内职务</label>
+						<div class="layui-input-inline">
+							<input type="text" class="layui-input" name="party_post" placeholder="请输入现任党内职务" maxlength="25" autocomplete="off">
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<div class="layui-form-item">
+							<label class="layui-form-label"><font style="color:red">*</font>月应缴纳党费</label>
+							<div class="layui-input-inline">
+								<input type="text" lay-verify="required|money" name="party_membership_dues" class="layui-input" placeholder="￥" maxlength="9" autocomplete="off">
+							</div>
+							<div class="layui-form-mid layui-word-aux">元</div>
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>党费缴至年月</label>
+						<div class="layui-input-inline">
+							<input type="text" lay-verify="required" class="layui-input" id="gmt_paid_until" name="gmt_paid_until" placeholder="请选择时间" maxlength="10" autocomplete="off">
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>是否为失联党员</label>
+						<div class="layui-input-inline">
+							<input type="radio" name="is_missing" value="1" title="是" lay-filter="is_missing" autocomplete="off">
+							<input type="radio" name="is_missing" value="0" title="否" lay-filter="is_missing" autocomplete="off" checked="checked">
+						</div>
+					</div>
+					<div class="layui-col-md4 layui-col-xs4 is_missing">
+						<label class="layui-form-label"><font style="color:red">*</font>失去联系日期</label>
+						<div class="layui-input-inline">
+							<input type="text" id="gmt_missing" name="gmt_missing" class="layui-input" placeholder="请选择时间" maxlength="10" autocomplete="off">
+						</div>
+					</div>
+				</div>
+				<div class="layui-row">
+					<div class="layui-col-md4 layui-col-xs4">
+						<label class="layui-form-label"><font style="color:red">*</font>是否为流动党员</label>
+						<div class="layui-input-inline">
+							<input type="radio" name="is_flow_communist" value="1" title="是" lay-filter="is_flow_communist" autocomplete="off">
+							<input type="radio" name="is_flow_communist" value="0" title="否" lay-filter="is_flow_communist" autocomplete="off" checked="checked">
+						</div>
+					</div>
+					<div class="layui-col-md8 layui-col-xs8 is_flow_communist">
+						<label class="layui-form-label"><font style="color:red">*</font>外出流向</label>
+						<div class="layui-input-block">
+							<input type="text" name="go_out_flow_direction" class="layui-input" placeholder="请输入外出流向" maxlength="200" autocomplete="off">
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block" align="center">
+						<input type="hidden" name="id" />
+						<input type="hidden" id="user_id" name="user_id" />
+						<input type="hidden" name="create_user_id" />
+						<input type="hidden" name="modified_user_id" />
+						<input type="button" class="layui-btn layui-btn-normal" value="保存" lay-filter="saveUser" lay-submit />
+						<input type="button" class="layui-btn layui-btn-primary" value="关闭" id="closeWindow" />
+					</div>
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript" src="../../js/pageComment.js"></script>
+		<script type="text/javascript" src="../../js/retireCommunist/retireCommunistEdit.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>中共党员登记_导入Excel</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" action="">
+<div class="layui-fluid">
+	<div class="layui-form-item">
+		<label class="layui-form-label">模板下载</label>
+		<div class="layui-input-block">
+			<button type="button" class="layui-btn layui-btn-radius" id="download_template">
+				<i class="layui-icon">&#xe656;</i>中共党员登记数据导入模板.xls
+			</button>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label"><font style="color:red">*</font>数据上传</label>
+		<div class="layui-input-block">
+			<button type="button" class="layui-btn layui-btn-radius" id="upload_excel" lay-verify="required">
+				<i class="layui-icon">&#xe67c;</i>选择文件
+			</button>
+			<span class="layui-inline layui-upload-choose"></span>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-input-block" align="center">
+			<input type="button" id="saveUser" value="保存" lay-filter="saveUser" lay-submit class="layui-btn layui-btn-normal" />
+			<input type="button" class="layui-btn layui-btn-primary" value="关闭" id="closeWindow"/>
+		</div>
+	</div>
+</div>	
+</form> 
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/retireCommunist/retireCommunistExp.js"></script>
+</body>
+</html>

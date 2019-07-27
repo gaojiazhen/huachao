@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>数据字典明细</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+	<style>
+.layui-table-cell {            overflow: visible !important;        } 
+td .layui-form-select{
+	margin-top: -10px;
+	margin-left: -15px;
+	margin-right: -15px;
+}  
+	</style>
+</head>
+<body class="childrenBody">
+<input type="hidden" id="kdCode" />
+<form class="layui-form"  id="formid">
+	<blockquote class="layui-elem-quote quoteBox">
+		<form class="layui-form">
+			<div class="layui-inline">
+				<a class="layui-btn search_btn" data-type="reload" id="submit">保存</a>
+			</div>
+			<div class="layui-inline">
+				<a class="layui-btn layui-btn-normal addNews_btn">添加对应编码</a>
+			</div>
+			<div class="layui-inline">
+				<a class="layui-btn layui-btn-danger codeAddI">添加拓展属性</a>
+			</div>
+		</form>
+	</blockquote>
+	<input type="button"  />
+	<table id="newsList" lay-filter="newsList"></table>
+	<!--操作-->
+	<script type="text/html" id="newsListBar">
+		<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+	</script>
+</form>
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/sysCodeKind/sysCodeInfo.js"></script>
+<script type="text/html" id="newsListTpl">
+	 <input type="checkbox"  value={{d.FL_AVAILABLE}} name="FL_AVAILABLE" lay-skin="switch" lay-filter="switchTest" lay-text="启动|关闭" {{d.FL_AVAILABLE == "1" ?"checked":"" }} >
+</script>
+</body>
+</html>

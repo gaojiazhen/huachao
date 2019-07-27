@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>中共党员登记</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" id="formid">
+	<blockquote class="layui-elem-quote quoteBox">
+		<div class="layui-inline">
+			<div class="layui-input-inline">
+				<select id="unit_id" name="unit_id">
+					<option value="">全部</option>
+				</select>
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" class="layui-input input-date" id="start_party_time" name="start_party_time" maxlength="10" placeholder="入党时间" >
+			</div>
+			至
+			<div class="layui-input-inline">
+				<input type="text" class="layui-input input-date" id="end_party_time" name="end_party_time" maxlength="10" placeholder="入党时间">
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" class="layui-input search-identity" name="userNameOrIdcard" placeholder="请输入姓名或身份证" maxlength="18" />
+			</div>
+			<a class="layui-btn search_btn" data-type="reload">搜索</a>
+			<a class="layui-btn layui-btn-normal" id="impExcel">导入Excel</a>
+		</div>
+	</blockquote>
+	<table id="userList" lay-filter="userList"></table>
+	<div id="pagediv"></div>
+	<!--操作-->
+	<script type="text/html" id="userListBar">
+		{{#  if(d.id == null || d.id == ""){ }}
+			<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="add">登记</a>
+		{{#  } else { }}
+			<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="update">修改</a>
+			<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+		{{#  } }}
+	</script>
+</form>
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/retireCommunist/retireCommunistList.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>数据字典明细</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form layui-row layui-col-space10">
+	<div class="layui-col-md9 layui-col-xs12">
+		<div class="layui-row layui-col-space10">
+			<div class="layui-col-md9 layui-col-xs7">
+				<div class="layui-form-item magt3">
+					<label class="layui-form-label">编码<font style="color:red">*</font></label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input newsName" lay-verify="required" placeholder="请输入编码" name="KD_CODE" id="KD_CODE" maxlength="80" readonly="true">
+					</div>
+				</div>
+				<div class="layui-form-item magt3">
+					<label class="layui-form-label">编码值<font style="color:red">*</font></label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="required" placeholder="请输入编码值" name="CODE" id="CODE" maxlength="80">
+					</div>
+				</div>
+				<div class="layui-form-item magt3">
+					<label class="layui-form-label">编码值名称<font style="color:red">*</font></label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="required" placeholder="请输入中文值" name="CODE_VAL" id="CODE_VAL" maxlength="80">
+					</div>
+				</div>
+				<div class="layui-form-item magt3">
+					<label class="layui-form-label">父级别编码</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="" placeholder="请输入父级别编码" name="CODE_SUPERIOR" id="CODE_SUPERIOR" maxlength="80">
+					</div>
+				</div>
+				<div class="layui-form-item magt3">
+					<label class="layui-form-label">是否启动<font style="color:red">*</font></label>
+					<div class="layui-input-block">
+						 <input type="checkbox" name="FL_AVAILABLE" value="1" lay-skin="switch" lay-filter="switchTest" lay-text='启动|关闭' checked>
+					</div>
+				</div>
+				<div class="layui-form-item magt3" id="result">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" lay-verify="checkValue" placeholder="请输入排序" name="SEQ_DISPLAY" id="SEQ_DISPLAY" maxlength="9">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<input type="submit" class="layui-btn layui-btn-normal addNews_btn" value="保存提交" lay-filter="formDemo" lay-submit/>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/sysCodeKind/sysCodeAdd.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>离休人员登记</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="../../layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../css/public.css" media="all" />
+</head>
+<body class="childrenBody">
+<form class="layui-form" action="">
+<div class="layui-fluid">
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">姓名</label>
+			<label class="layui-form-label" id="user_name"></label> 
+			<input type="hidden" id="user_id" name="user_id" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">性别</label>
+			<label class="layui-form-label" id="sex_name"></label>
+			<input type="hidden" id="sex_id" value="code_11602" >
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">身份号码</label>
+			<label class="layui-form-label" id="idcard"></label>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label">月收入总额</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="monthly_income" name="monthly_income" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label"><font style="color:red">*</font>基本离休费</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="required|money" id="basic_expenses" name="basic_expenses" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label">省（部）规定补贴</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="province_subsidy" name="province_subsidy" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label">其它各项补贴</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="other_subsidy" name="other_subsidy" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label">自雇费</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="self_employed_fee" name="self_employed_fee" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label">护理费</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="nursing_fee" name="nursing_fee" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<div class="layui-form-item">
+				<label class="layui-form-label">交通费</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="car_fare" name="car_fare" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off" >
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">子女总人数</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="integer" id="children_number" name="children_number" class="layui-input"
+				placeholder="请输入子女总人数" maxlength="1" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label">无劳动能力需抚养子女人数</label>
+			<div class="layui-input-inline">
+				<input type="text" lay-verify="integer" id="raising_a_child_number" name="raising_a_child_number" class="layui-input"
+				placeholder="请输入无劳动能力需抚养子女人数" maxlength="1" autocomplete="off" >
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶状况</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="spouse_situation" value="1" title="健在" 
+					autocomplete="off" lay-filter="spouse_situation" lay-verify="spouseSituationRadio" >
+				<input type="radio" name="spouse_situation" value="9" title="死亡" 
+					autocomplete="off" lay-filter="spouse_situation" lay-verify="spouseSituationRadio" >
+			</div>
+			<input type="hidden" id="spouse_situation" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" id="spouse_name" name="spouse_name" class="layui-input"
+				placeholder="请输入配偶姓名" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶出生年月</label>
+			<div class="layui-input-inline">
+				<input type="text" id="spouse_birth_date" name="spouse_birth_date" class="layui-input" 
+				placeholder="请选择时间" maxlength="10" autocomplete="off" >
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md8 layui-col-xs8 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶有无工作情况</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="spouse_is_work" value="0" title="无工作" 
+				lay-filter="spouse_is_work" autocomplete="off" >
+			</div>	
+			<div class="layui-input-inline">
+				<input type="radio" name="spouse_is_work" value="1" title="有工作" 
+				lay-filter="spouse_is_work" autocomplete="off" >
+			</div>
+			<div class="layui-input-inline" id="spouse_department_div">
+				<input type="text" id="spouse_department_name" name="spouse_department_name" class="layui-input" 
+				placeholder="请输入配偶工作单位名称" maxlength="200" autocomplete="off" >
+			</div>
+			<input type="hidden" id="spouse_is_work" />
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶现安置地</label>
+			<div class="layui-input-inline">
+				<input type="text" id="spouse_settlement" name="spouse_settlement" class="layui-input" 
+				placeholder="请输入配偶现安置地" maxlength="200" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-row">
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<div class="layui-form-item">
+				<label class="layui-form-label"><font style="color:red">*</font>定期补助/月</label>
+				<div class="layui-input-inline">
+					<input type="text" lay-verify="money" id="regular_subsidy" name="regular_subsidy" class="layui-input" 
+					placeholder="￥" maxlength="9" autocomplete="off">
+				</div>
+				<div class="layui-form-mid layui-word-aux">元</div>
+			</div>
+		</div>
+		<div class="layui-col-md4 layui-col-xs4 spouse_info">
+			<label class="layui-form-label"><font style="color:red">*</font>配偶联系方式</label>
+			<div class="layui-input-inline">
+				<input type="text" id="spouse_contact" name="spouse_contact" class="layui-input" 
+				placeholder="请输入配偶联系方式" maxlength="100" autocomplete="off">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-input-block" align="center">
+			<input type="hidden" name="id" />
+			<input type="hidden" name="create_user_id" />
+			<input type="hidden" name="modified_user_id" />
+			<input type="button" value="保存" lay-filter="saveUser" lay-submit class="layui-btn layui-btn-normal" />
+			<input type="button" class="layui-btn layui-btn-primary" value="关闭" id="closeWindow"/>
+		</div>
+	</div>
+</div>	
+</form> 
+<script type="text/javascript" src="../../js/pageComment.js"></script>
+<script type="text/javascript" src="../../js/retireQuit/quitUserEdit.js"></script>
+</body>
+</html>

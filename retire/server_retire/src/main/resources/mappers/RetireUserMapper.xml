@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员基本信息库_映射器
+@author 陈麟
+@date 2019年06月05日 上午10:45:07
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetireUserDAO">
+
+    <!-- 查找离（退）休人员基本信息库列表信息 -->
+    <select id="listRetireUser" resultType="com.fjhcit.entity.RetireUserDO" parameterType="java.util.Map">
+        select id,unit_id,user_name,sex_id,to_char(birth_date,'yyyy-mm-dd') as birth_date,nation_id,native_place,
+        marital_status_id,education_id,idcard,registered_permanent_residence,residence_address,to_char(work_time,'yyyy-mm-dd')
+        as work_time,
+        to_char(retire_time,'yyyy-mm-dd') as
+        retire_time,politics_status_id,retire_type_id,retire_nature_id,for_retirees,
+        technical_posts,retirement_rank_id,now_treatment_level_id,to_char(treatment_approval_time,'yyyy-mm-dd') as
+        treatment_approval_time,treatment_approval_typenumber,
+        retirement_settlement,is_earthly_place,is_beijing,is_socialized_pension,is_medical_insurance,bank_card_number,social_security_area,
+        archives_area_id,receive_area_id,receive_area_address,archives_book_number,health_status,to_char(deceased_time,'yyyy-mm-dd')
+        as deceased_time,
+        health_status_details,play_a_role_ids,play_a_role_specific,is_system_employees,
+        spouse_name,spouse_unit,spouse_duty,spouse_contact,is_model_personnel,honor,prizes_department,award_level_id,is_soldier_cadre,military_level,
+        special_crowd_ids,special_remark,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+        (select user_name from base_user where id = u.modified_user_id) as modified_user_name,
+        <!-- 			(select special_mark from base_code where code = u.politics_status_id) as politics_status_special_mark, -->
+        <!-- 			(select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) as health_status_special_mark, -->
+        <!-- <![CDATA[			(select max(SPECIAL_MARK) from base_code where code in ( -->
+        <!--                         SELECT -->
+        <!--                             REGEXP_SUBSTR(u.play_a_role_ids, '[^,]+', 1, LEVEL, 'i') AS STR    -->
+        <!--                         FROM DUAL    -->
+        <!--                         CONNECT BY LEVEL <=    -->
+        <!--                         LENGTH(u.play_a_role_ids) - LENGTH(REGEXP_REPLACE(u.play_a_role_ids, ',','')) + 1)     ]]> -->
+        <!--                        )  play_a_role_ids_special_mark, -->
+        <!--            (select special_mark from base_code where code = u.retire_type_id) as retire_type_id_special_mark, -->
+        area_code,landline,phone,child_working_sys
+        from retire_user u
+        <where>
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>
+            <if test="sex_id != null and sex_id != ''">
+                and sex_id = #{sex_id}
+            </if>
+            <if test="nation_id != null and nation_id != ''">
+                and nation_id = #{nation_id}
+            </if>
+            <if test="marital_status_id != null and marital_status_id != ''">
+                and marital_status_id = #{marital_status_id}
+            </if>
+            <if test="education_id != null and education_id != ''">
+                and education_id = #{education_id}
+            </if>
+            <if test="politics_status_id != null and politics_status_id != ''">
+                and politics_status_id = #{politics_status_id}
+            </if>
+            <if test="retire_type_id != null and retire_type_id != ''">
+                and retire_type_id = #{retire_type_id}
+            </if>
+            <if test="retire_nature_id != null and retire_nature_id != ''">
+                and retire_nature_id = #{retire_nature_id}
+            </if>
+            <if test="retirement_rank_id != null and retirement_rank_id != ''">
+                and retirement_rank_id = #{retirement_rank_id}
+            </if>
+            <if test="now_treatment_level_id != null and now_treatment_level_id != ''">
+                and now_treatment_level_id = #{now_treatment_level_id}
+            </if>
+            <if test="archives_area_id != null and archives_area_id != ''">
+                and archives_area_id = #{archives_area_id}
+            </if>
+            <if test="receive_area_id != null and receive_area_id != ''">
+                and receive_area_id = #{receive_area_id}
+            </if>
+            <if test="health_status != null and health_status != ''">
+                and health_status = #{health_status}
+            </if>
+            <if test="start_retire_time != null and start_retire_time != ''">
+                and retire_time >= to_date(#{start_retire_time},'yyyy-mm-dd')
+            </if>
+            <if test="end_retire_time != null and end_retire_time != ''">
+                <![CDATA[ and retire_time <= to_date(#{end_retire_time},'yyyy-mm-dd') ]]>
+            </if>
+            <if test="userNameOrIdcard != null and userNameOrIdcard != ''">
+                and (user_name like '%' || #{userNameOrIdcard} || '%' or idcard like '%' || #{userNameOrIdcard} || '%'
+                      or native_place like  '%' || #{userNameOrIdcard} || '%'
+                      or to_char(birth_date,'yyyy-mm-dd') like  '%' || #{userNameOrIdcard} || '%'
+                      or registered_permanent_residence like  '%' || #{userNameOrIdcard} || '%'
+                      or residence_address like  '%' || #{userNameOrIdcard} || '%'
+                      or to_char(work_time,'yyyy-mm-dd') like  '%' || #{userNameOrIdcard} || '%'
+                      or for_retirees like  '%' || #{userNameOrIdcard} || '%'
+                      or technical_posts like  '%' || #{userNameOrIdcard} || '%'
+                      or to_char(treatment_approval_time,'yyyy-mm-dd') like  '%' || #{userNameOrIdcard} || '%'
+                      or treatment_approval_typenumber like  '%' || #{userNameOrIdcard} || '%'
+                      or retirement_settlement like  '%' || #{userNameOrIdcard} || '%'
+                        or case when is_earthly_place = 1 then
+                        '属地安置' else '异地安置' end  like  '%' || #{userNameOrIdcard} || '%'
+                        or case when is_beijing = 1 then
+                        '是' else '否' end  like  '%' || #{userNameOrIdcard} || '%'
+                        or case when is_socialized_pension = 1 then
+                        '是' else '否' end  like  '%' || #{userNameOrIdcard} || '%'
+                        or case when is_medical_insurance = 1 then
+                        '是' else '否' end  like  '%' || #{userNameOrIdcard} || '%'
+                        or bank_card_number like  '%' || #{userNameOrIdcard} || '%'
+                        or case when child_working_sys = 1 then
+                        '是' else '否' end  like  '%' || #{userNameOrIdcard} || '%'
+                        or phone like  '%' || #{userNameOrIdcard} || '%'
+                        or area_code like  '%' || #{userNameOrIdcard} || '%'
+                        or landline like  '%' || #{userNameOrIdcard} || '%'
+                        or social_security_area like  '%' || #{userNameOrIdcard} || '%'
+                        or receive_area_address like  '%' || #{userNameOrIdcard} || '%'
+                        or archives_book_number like  '%' || #{userNameOrIdcard} || '%'
+                )
+            </if>
+        </where>
+        <choose>
+            <when test="sortField == 'user_name'">
+                order by user_name
+            </when>
+            <when test="sortField == 'idcard'">
+                order by idcard
+            </when>
+            <when test="sortField == 'work_time'">
+                order by work_time
+            </when>
+            <when test="sortField == 'retire_time'">
+                order by retire_time
+            </when>
+            <when test="sortField == 'gmt_create'">
+                order by gmt_create
+            </when>
+            <when test="sortField == 'gmt_modified'">
+                order by gmt_modified
+            </when>
+            <otherwise>
+                order by id
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="sortType == 'asc'">
+                asc
+            </when>
+            <when test="sortType == 'desc'">
+                desc
+            </when>
+        </choose>
+    </select>
+
+    <!-- 查找离（退）休人员基本信息库单条信息 -->
+    <select id="getRetireUserDOById" resultType="com.fjhcit.entity.RetireUserDO" parameterType="java.lang.String">
+		select id,unit_id,user_name,sex_id,to_char(birth_date,'yyyy-mm-dd') as birth_date,nation_id,native_place,marital_status_id,education_id,idcard,
+			registered_permanent_residence,residence_address,to_char(work_time,'yyyy-mm-dd') as work_time,to_char(retire_time,'yyyy-mm-dd') as retire_time,politics_status_id,retire_type_id,retire_nature_id,for_retirees,technical_posts,retirement_rank_id,
+			now_treatment_level_id,to_char(treatment_approval_time,'yyyy-mm-dd') as treatment_approval_time,treatment_approval_typenumber,retirement_settlement,is_earthly_place,is_beijing,is_socialized_pension,is_medical_insurance,bank_card_number,social_security_area,
+			archives_area_id,receive_area_id,receive_area_address,archives_book_number,health_status,to_char(deceased_time,'yyyy-mm-dd') as deceased_time,health_status_details,play_a_role_ids,play_a_role_specific,is_system_employees,
+			spouse_name,spouse_unit,spouse_duty,spouse_contact,is_model_personnel,honor,prizes_department,award_level_id,is_soldier_cadre,military_level,
+			special_crowd_ids,special_remark,
+			(select user_name from base_user where id = u.modified_user_id) as modified_user_name,
+			(select special_mark from base_code where code = u.politics_status_id) as politics_status_special_mark,
+			(select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) as health_status_special_mark,
+			area_code,landline,phone,child_working_sys
+		from retire_user u where id=#{id}
+	</select>
+
+    <!-- 添加离（退）休人员基本信息库信息 -->
+    <insert id="insertRetireUser" parameterType="com.fjhcit.entity.RetireUserDO">
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select seq_retire_user.nextval as id from dual
+        </selectKey>
+        insert into retire_user
+        (id,unit_id,user_name,sex_id,birth_date,nation_id,native_place,marital_status_id,education_id,idcard,
+        registered_permanent_residence,residence_address,work_time,retire_time,politics_status_id,retire_type_id,retire_nature_id,for_retirees,technical_posts,retirement_rank_id,
+        now_treatment_level_id,treatment_approval_time,treatment_approval_typenumber,retirement_settlement,is_earthly_place,is_beijing,is_socialized_pension,is_medical_insurance,bank_card_number,social_security_area,
+        archives_area_id,receive_area_id,receive_area_address,archives_book_number,health_status,deceased_time,health_status_details,play_a_role_ids,play_a_role_specific,is_system_employees,
+        spouse_name,spouse_unit,spouse_duty,spouse_contact,is_model_personnel,honor,prizes_department,award_level_id,is_soldier_cadre,military_level,
+        special_crowd_ids,special_remark,create_user_id,gmt_create,modified_user_id,gmt_modified,area_code,landline,phone,child_working_sys)
+        values
+        (#{id},#{unit_id},#{user_name},#{sex_id},to_date(#{birth_date},'yyyy-mm-dd'),#{nation_id},#{native_place},#{marital_status_id},#{education_id},#{idcard},
+        #{registered_permanent_residence},#{residence_address},to_date(#{work_time},'yyyy-mm-dd'),to_date(#{retire_time},'yyyy-mm-dd'),#{politics_status_id},#{retire_type_id},#{retire_nature_id},#{for_retirees},#{technical_posts},#{retirement_rank_id},
+        #{now_treatment_level_id},to_date(#{treatment_approval_time},'yyyy-mm-dd'),#{treatment_approval_typenumber},#{retirement_settlement},#{is_earthly_place},#{is_beijing},#{is_socialized_pension},#{is_medical_insurance},#{bank_card_number},#{social_security_area},
+        #{archives_area_id},#{receive_area_id},#{receive_area_address},#{archives_book_number},#{health_status},to_date(#{deceased_time},'yyyy-mm-dd'),#{health_status_details},#{play_a_role_ids},#{play_a_role_specific},#{is_system_employees},
+        #{spouse_name},#{spouse_unit},#{spouse_duty},#{spouse_contact},#{is_model_personnel},#{honor},#{prizes_department},#{award_level_id},#{is_soldier_cadre},#{military_level},
+        #{special_crowd_ids},#{special_remark},#{create_user_id},sysdate,#{modified_user_id},sysdate,#{area_code},#{landline},#{phone},#{child_working_sys})
+    </insert>
+
+    <!-- 更新离（退）休人员基本信息库信息 -->
+    <update id="updateRetireUser" parameterType="com.fjhcit.entity.RetireUserDO">
+        update retire_user
+        <set>
+            MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+            <if test="unit_id!=null">unit_id = #{unit_id},</if>
+            <if test="user_name!=null">user_name = #{user_name},</if>
+            <if test="sex_id!=null">sex_id = #{sex_id},</if>
+            <if test="birth_date!=null">birth_date = to_date(#{birth_date},'yyyy-mm-dd'),</if>
+            <if test="nation_id!=null">nation_id = #{nation_id},</if>
+            <if test="native_place!=null">native_place = #{native_place},</if>
+            <if test="marital_status_id!=null">marital_status_id = #{marital_status_id},</if>
+            <if test="education_id!=null">education_id = #{education_id},</if>
+            <if test="idcard!=null">idcard = #{idcard},</if>
+            <if test="registered_permanent_residence!=null">registered_permanent_residence =
+                #{registered_permanent_residence},
+            </if>
+            <if test="residence_address!=null">residence_address = #{residence_address},</if>
+            <if test="work_time!=null">work_time = to_date(#{work_time},'yyyy-mm-dd'),</if>
+            <if test="retire_time!=null">retire_time = to_date(#{retire_time},'yyyy-mm-dd'),</if>
+            <if test="politics_status_id!=null">politics_status_id = #{politics_status_id},</if>
+            <if test="retire_type_id!=null">retire_type_id = #{retire_type_id},</if>
+            <if test="retire_nature_id!=null">retire_nature_id = #{retire_nature_id},</if>
+            <if test="for_retirees!=null">for_retirees = #{for_retirees},</if>
+            <if test="technical_posts!=null">technical_posts = #{technical_posts},</if>
+            <if test="retirement_rank_id!=null">retirement_rank_id = #{retirement_rank_id},</if>
+            <if test="now_treatment_level_id!=null">now_treatment_level_id = #{now_treatment_level_id},</if>
+            <if test="treatment_approval_time!=null">treatment_approval_time =
+                to_date(#{treatment_approval_time},'yyyy-mm-dd'),
+            </if>
+            <if test="treatment_approval_typenumber!=null">treatment_approval_typenumber = #{treatment_approval_typenumber},</if>
+            <if test="retirement_settlement!=null">retirement_settlement = #{retirement_settlement},</if>
+            <if test="is_earthly_place!=null">is_earthly_place = #{is_earthly_place},</if>
+            <if test="is_beijing!=null">is_beijing = #{is_beijing},</if>
+            <if test="is_socialized_pension!=null">is_socialized_pension = #{is_socialized_pension},</if>
+            <if test="is_medical_insurance!=null">is_medical_insurance = #{is_medical_insurance},</if>
+            <if test="bank_card_number!=null">bank_card_number = #{bank_card_number},</if>
+            <if test="phone!=null">phone = #{phone},</if>
+            <if test="area_code!=null">area_code = #{area_code},</if>
+            <if test="landline!=null">landline = #{landline},</if>
+            <if test="child_working_sys!=null">child_working_sys = #{child_working_sys},</if>
+            <if test="social_security_area!=null">social_security_area = #{social_security_area},</if>
+            <if test="archives_area_id!=null">archives_area_id = #{archives_area_id},</if>
+            <if test="receive_area_id!=null">receive_area_id = #{receive_area_id},</if>
+            <if test="receive_area_address!=null">receive_area_address = #{receive_area_address},</if>
+            <if test="archives_book_number!=null">archives_book_number = #{archives_book_number},</if>
+            <if test="health_status!=null">health_status = #{health_status},</if>
+            <if test="deceased_time!=null">deceased_time = to_date(#{deceased_time},'yyyy-mm-dd'),</if>
+            <if test="health_status_details!=null">health_status_details = #{health_status_details},</if>
+            <if test="play_a_role_ids!=null">play_a_role_ids = #{play_a_role_ids},</if>
+            <if test="play_a_role_specific!=null">play_a_role_specific = #{play_a_role_specific},</if>
+            <if test="is_system_employees!=null">is_system_employees = #{is_system_employees},</if>
+            <if test="spouse_name!=null">spouse_name = #{spouse_name},</if>
+            <if test="spouse_unit!=null">spouse_unit = #{spouse_unit},</if>
+            <if test="spouse_duty!=null">spouse_duty = #{spouse_duty},</if>
+            <if test="spouse_contact!=null">spouse_contact = #{spouse_contact},</if>
+            <if test="is_model_personnel!=null">is_model_personnel = #{is_model_personnel},</if>
+            <if test="honor!=null">honor = #{honor},</if>
+            <if test="prizes_department!=null">prizes_department = #{prizes_department},</if>
+            <if test="award_level_id!=null">award_level_id = #{award_level_id},</if>
+            <if test="is_soldier_cadre!=null">is_soldier_cadre = #{is_soldier_cadre},</if>
+            <if test="military_level!=null">military_level = #{military_level},</if>
+            <if test="special_crowd_ids!=null">special_crowd_ids = #{special_crowd_ids},</if>
+            <if test="special_remark!=null">special_remark = #{special_remark},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 删除离（退）休人员基本信息库信息 -->
+    <delete id="removeRetireUserByIdsArr" parameterType="java.util.Map">
+        delete from retire_user where id in
+        <foreach collection="idsArr" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!-- 查询（身份证）是否重复 -->
+    <select id="findRetireUserCountByIdcard" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(id) from retire_user where IDCARD = #{idcard}
+        <if test="id != null and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+
+    <!-- 根据身份证查询人员是否存在 -->
+    <select id="listRetireUserIdByIdcard" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select id from retire_user where IDCARD = #{idcard}
+    </select>
+
+    <!-- 查询国网统计报表_离休干部两年数字变化 -->
+    <select id="listQuitCadreBiennialChange" parameterType="java.util.Map" resultType="java.util.Map">
+        select DEPARTMENT_NAME,
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id = #{retire_nature_id}
+        and ((select nvl(special_mark,0) from base_code where code = t.HEALTH_STATUS) != 9 or to_char(deceased_time,
+        'yyyy') = to_char(sysdate, 'yyyy')) )) as LAST_YEAR_CADRE,
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id = #{retire_nature_id}
+        and to_char(deceased_time, 'yyyy') = to_char(sysdate, 'yyyy'))) as THIS_YEAR_CADRE_DEMISE
+        from base_department d where d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+
+    <!-- 查询国网统计报表_离休干部分地区情况统计表 -->
+    <select id="listQuitCadreByRegion" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+			to_char((select count(1) from retire_user u,base_department d
+			where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'fz'
+			and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as FZ,
+			to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'xm'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as XM,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'pt'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as PT,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'qz'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as QZ,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'ly'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as LY,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'zz'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as ZZ,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'np'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as NP,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'nd'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as ND,
+            to_char((select count(1) from retire_user u,base_department d
+            where u.unit_id = d.id and d.parent_id = 0 and d.IS_AVAILABLE = 1 and REGION_SIGN = 'sm'
+            and retire_nature_id = #{retire_nature_id} and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) as SM
+        from dual
+    </select>
+
+    <!-- 查询国网统计报表_企业离休干部统计 -->
+    <select id="listQuitCadreBasic" parameterType="java.util.Map" resultType="java.util.Map">
+        select DEPARTMENT_NAME,
+        to_char((select count(1) from retire_user u
+        where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id = #{retire_nature_id})) as TOTAL,
+        to_char((select count(1) from retire_user u
+        where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id = #{retire_nature_id}
+        and POLITICS_STATUS_ID = #{politics_status_id})) as COMMUNIST,
+        to_char((select count(1) from retire_user u
+        where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id = #{retire_nature_id}
+        and HEALTH_STATUS = #{health_status})) as CANNOT_CARE_ONESELF,
+        to_char((select count(1) from retire_user u
+        where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id = #{retire_nature_id}
+        and (to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy')) >= 70
+        <![CDATA[         and (to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy')) <= 79)) as SEVENTY_AGE,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and (to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy')) >= 80)) as EIGHTY_AGE,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and WORK_TIME <= to_date('1927-07-31', 'yyyy-mm-dd'))) as WORK_TIME_19270731,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and IS_BEIJING = 1
+                  and WORK_TIME <= to_date('1927-07-31', 'yyyy-mm-dd'))) as BEIJING_19270731,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and WORK_TIME >= to_date('1927-08-01', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1937-07-06', 'yyyy-mm-dd'))) as WORK_TIME_19370706,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and IS_BEIJING = 1
+                  and WORK_TIME >= to_date('1927-08-01', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1937-07-06', 'yyyy-mm-dd'))) as BEIJING_19370706,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and WORK_TIME >= to_date('1937-07-07', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1942-12-31', 'yyyy-mm-dd'))) as WORK_TIME_19421231,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and IS_BEIJING = 1
+                  and WORK_TIME >= to_date('1937-07-07', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1942-12-31', 'yyyy-mm-dd'))) as BEIJING_19421231,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and WORK_TIME >= to_date('1943-01-01', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1945-09-02', 'yyyy-mm-dd'))) as WORK_TIME_19450902,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and IS_BEIJING = 1
+                  and WORK_TIME >= to_date('1943-01-01', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1945-09-02', 'yyyy-mm-dd'))) as BEIJING_19450902,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and WORK_TIME >= to_date('1945-09-03', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1945-09-30', 'yyyy-mm-dd'))) as WORK_TIME_19450930,
+            to_char((select count(1) from retire_user u
+                where u.unit_id = d.id
+                  and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+                  and retire_nature_id = #{retire_nature_id}
+                  and IS_BEIJING = 1
+                  and WORK_TIME >= to_date('1945-09-03', 'yyyy-mm-dd')
+                  and WORK_TIME <= to_date('1945-09-30', 'yyyy-mm-dd'))) as BEIJING_19450930  ]]>
+        from base_department d where d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+
+    <!-- 查询国网统计报表_退休干部享受待遇统计
+    	  查询国网统计报表_退休人员党组织关系情况表
+     -->
+    <select id="listRetireCadreTreatment" parameterType="java.util.Map" resultType="java.util.Map" flushCache="true">
+        select DEPARTMENT_NAME ${dynamicFields}
+        from base_department d where d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+
+    <!-- 查询国网统计报表_退休干部两年数字变化 -->
+    <select id="listRetireCadreBiennialChange" parameterType="java.util.Map" resultType="java.util.Map"
+            flushCache="true">
+        select DEPARTMENT_NAME,
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreid" open="(" separator="," close=")">
+            #{cadreid}
+        </foreach>
+        <![CDATA[      and RETIRE_TIME <= to_date( (to_char(sysdate, 'yyyy')-1) || '-12-31', 'yyyy-mm-dd')
+                and ((select nvl(special_mark,0) from base_code where code = t.HEALTH_STATUS) != 9 or to_char(deceased_time, 'yyyy') <= to_char(sysdate, 'yyyy')) )) as PREVIOUS_YEAR_CADRE,  ]]>
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreid" open="(" separator="," close=")">
+            #{cadreid}
+        </foreach>
+        and to_char(RETIRE_TIME,'yyyy') = to_char(sysdate, 'yyyy') )) as THIS_YEAR_RETIRE,
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreid" open="(" separator="," close=")">
+            #{cadreid}
+        </foreach>
+        and to_char(deceased_time, 'yyyy') = to_char(sysdate, 'yyyy'))) as THIS_YEAR_DECEASED,
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreid" open="(" separator="," close=")">
+            #{cadreid}
+        </foreach>
+        and (select nvl(special_mark,0) from base_code where code = t.HEALTH_STATUS) != 9 and IS_BEIJING = 1 )) as
+        IN_BEIJING,
+        to_char((select count(1) from RETIRE_USER t
+        where t.unit_id = d.id and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreid" open="(" separator="," close=")">
+            #{cadreid}
+        </foreach>
+        and (select nvl(special_mark,0) from base_code where code = t.HEALTH_STATUS) != 9 and POLITICS_STATUS_ID =
+        #{BASE_CODE_POLITICS_STATUS_COMMUNIST} )) as COMMUNIST
+        <if test="founding_state == 1">
+            ,to_char((select count(1) from RETIRE_USER t
+            where t.unit_id = d.id and retire_nature_id in
+            <foreach collection="cadreIdArray" item="cadreid" open="(" separator="," close=")">
+                #{cadreid}
+            </foreach>
+            <![CDATA[       and (select nvl(special_mark,0) from base_code where code = t.HEALTH_STATUS) != 9 and WORK_TIME < to_date('1949-10-01', 'yyyy-mm-dd') )) as FOUNDING_STATE_WORK  ]]>
+        </if>
+        from base_department d where d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+
+    <!-- 查询国网统计报表_离休干部管理现状统计 -->
+    <select id="listQuitCadreCurrentSituation" parameterType="java.util.Map" resultType="java.util.Map"
+            flushCache="true">
+        select DEPARTMENT_NAME,
+        to_char((select count(1) from retire_user u where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9 and retire_nature_id in
+        <foreach collection="cadreIdArray"  item="cadreId" open="(" separator="," close=")">
+                #{cadreId}
+        </foreach>
+
+        )) TOTAL,
+        to_char((select count(1) from retire_user u where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id in
+        <foreach collection="cadreIdArray"  item="cadreId" open="(" separator="," close=")">
+
+                #{cadreId}
+
+        </foreach>
+        and is_socialized_pension = '1')) SOCIALIZED_PENSION,
+        to_char((select count(1) from retire_user u where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreId" open="(" separator="," close=")">
+
+                #{cadreId}
+
+        </foreach>
+        and is_medical_insurance = '1')) MEDICAL_INSURANCE,
+        to_char((select count(1) from retire_user u,RETIRE_COMMUNIST C where u.unit_id = d.id and u.id = c.user_id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreId" open="(" separator="," close=")">
+                #{cadreId}
+        </foreach>
+        and MEMBERSHIP_CREDENTIALS_ID = #{party_located_id})) PARTY_TRANSFER_LOCAL,
+        to_char((select count(1) from retire_user u where u.unit_id = d.id
+        and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+        and retire_nature_id in
+        <foreach collection="cadreIdArray" item="cadreId" open="(" separator="," close=")">
+                #{cadreId}
+        </foreach>
+        and archives_area_id = '1')) ARCHIVES_TRANSFER_LOCAL
+        <if test="cross_district == 1">
+            ,to_char((select count(1) from retire_user u where u.unit_id = d.id
+            and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+            and retire_nature_id in
+            <foreach collection="cadreIdArray" item="cadreId" open="(" separator="," close=")">
+                    #{cadreId}
+            </foreach>
+            and IS_EARTHLY_PLACE = 5)) CROSS_DISTRICT
+        </if>
+        ${dynamicFields}
+        from base_department d where d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+
+    <select id="listRetireUserBasic" parameterType="java.util.Map" resultType="java.util.Map" flushCache="true">
+        select d.id,department_name,'小计' as code_name,
+        to_char((SELECT COUNT(1) FROM retire_user u WHERE unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and RETIRE_NATURE_ID in ('10202','10203','10204','10205','10206','10207')))
+        AS total_num,
+        to_char((select round(avg(to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy'))) from retire_user u where
+        unit_id = d.id AND (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9 and
+        RETIRE_NATURE_ID in ('10202','10203','10204','10205','10206','10207'))) AS age_avg,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 45
+        and RETIRE_NATURE_ID in ('10202','10203','10204','10205','10206','10207'))) age_45,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 46
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 50 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_46_50,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 51
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 55 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_51_55,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 56
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 60 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_56_60,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 61
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 70 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_61_70,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 71
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 80 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_71_80,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 81
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 90 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_81_90,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 91
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 99 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205','10206','10207'))) age_91_99,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 100
+        and RETIRE_NATURE_ID in ('10202','10203','10204','10205','10206','10207'))) age_100 ,
+        sortnum
+        ${dynamicFieldsSubtotal}
+        from base_department d
+        where 1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        union all
+        select d.id,department_name,'退休' as code_name,
+        to_char((SELECT COUNT(1) FROM retire_user u WHERE unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and RETIRE_NATURE_ID in ('10202','10203','10204','10205'))) AS total_num,
+        to_char((select round(avg(to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy'))) from retire_user u where
+        unit_id = d.id AND (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9 and
+        RETIRE_NATURE_ID in ('10202','10203','10204','10205'))) AS age_avg,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 45
+        and RETIRE_NATURE_ID in ('10202','10203','10204','10205'))) age_45,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 46
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 50 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_46_50,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 51
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 55 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_51_55,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 56
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 60 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_56_60,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 61
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 70 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_61_70,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 71
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 80 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_71_80,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 81
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 90 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_81_90,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 91
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 99 and RETIRE_NATURE_ID in
+        ('10202','10203','10204','10205'))) age_91_99,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 100
+        and RETIRE_NATURE_ID in ('10202','10203','10204','10205'))) age_100 ,
+        sortnum
+        ${dynamicFieldsRetire}
+        from base_department d
+        where 1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        union all
+        select d.id,department_name,'退职' as code_name,
+        to_char((SELECT COUNT(1) FROM retire_user u WHERE unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and RETIRE_NATURE_ID in ('10206'))) AS total_num,
+        to_char((select round(avg(to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy'))) from retire_user u where
+        unit_id = d.id AND (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9 and
+        RETIRE_NATURE_ID in ('10206'))) AS age_avg,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 45
+        and RETIRE_NATURE_ID in ('10206'))) age_45,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 46
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 50 and RETIRE_NATURE_ID in ('10206')))
+        age_46_50,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 51
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 55 and RETIRE_NATURE_ID in ('10206')))
+        age_51_55,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 56
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 60 and RETIRE_NATURE_ID in ('10206')))
+        age_56_60,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 61
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 70 and RETIRE_NATURE_ID in ('10206')))
+        age_61_70,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 71
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 80 and RETIRE_NATURE_ID in ('10206')))
+        age_71_80,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 81
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 90 and RETIRE_NATURE_ID in ('10206')))
+        age_81_90,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 91
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 99 and RETIRE_NATURE_ID in ('10206')))
+        age_91_99,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 100
+        and RETIRE_NATURE_ID in ('10206'))) age_100 ,
+        sortnum
+        ${dynamicFieldsResign}
+        from base_department d
+        where 1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        union all
+        select d.id,department_name,'内退' as code_name,
+        to_char((SELECT COUNT(1) FROM retire_user u WHERE unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and RETIRE_NATURE_ID in ('10207'))) AS total_num,
+        to_char((select round(avg(to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy'))) from retire_user u where
+        unit_id = d.id AND (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9 and
+        RETIRE_NATURE_ID in ('10207'))) AS age_avg,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 45
+        and RETIRE_NATURE_ID in ('10207'))) age_45,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 46
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 50 and RETIRE_NATURE_ID in ('10207')))
+        age_46_50,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 51
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 55 and RETIRE_NATURE_ID in ('10207')))
+        age_51_55,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 56
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 60 and RETIRE_NATURE_ID in ('10207')))
+        age_56_60,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 61
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 70 and RETIRE_NATURE_ID in ('10207')))
+        age_61_70,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 71
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 80 and RETIRE_NATURE_ID in ('10207')))
+        age_71_80,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 81
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 90 and RETIRE_NATURE_ID in ('10207')))
+        age_81_90,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 91
+        AND (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[<=]]> 99 and RETIRE_NATURE_ID in ('10207')))
+        age_91_99,
+        to_char((select count(1) from retire_user u where unit_id = d.id AND (select nvl(special_mark,0) from base_code
+        where code = u.HEALTH_STATUS) != 9 and (to_char(sysdate,'yyyy') - to_char(BIRTH_DATE,'yyyy')) <![CDATA[>=]]> 100
+        and RETIRE_NATURE_ID in ('10207'))) age_100 ,
+        sortnum
+        ${dynamicFieldsEarlyRetire}
+        from base_department d
+        where 1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+
+    <!-- 查询国网统计报表_退休人员个人信息明细表 -->
+    <select id="listRetireUserPersonalInformation" parameterType="java.util.Map" resultType="java.util.Map">
+		select u.user_name,u.idcard,
+		       (select code_val from base_code where code = u.sex_id) sex_id,u.native_place,
+		       (select code_val from base_code where code = u.nation_id) nation_id,to_char(birth_date,'yyyy-mm-dd') birth_date,
+		       (select code_val from base_code where code = u.POLITICS_STATUS_ID) POLITICS_STATUS_ID,
+		       (select code_val from base_code where code = u.EDUCATION_ID) EDUCATION_ID,
+		       (select code_val from base_code where code = u.now_treatment_level_id) now_treatment_level_id,to_char(WORK_TIME,'yyyy-mm-dd') WORK_TIME,
+		       to_char(RETIRE_TIME,'yyyy-mm-dd') RETIRE_TIME,FOR_RETIREES,TECHNICAL_POSTS,
+		       PHONE,SOCIAL_SECURITY_AREA,REGISTERED_PERMANENT_RESIDENCE,RESIDENCE_ADDRESS,
+		       (select code_val from base_code where code = u.receive_area_id) receive_area_id,
+		       to_char(c.GMT_PARTY,'yyyy-mm-dd') GMT_PARTY,
+		       (select code_val from base_code where code = c.membership_credentials_id) membership_credentials_id,
+		       to_char(c.PARTY_MEMBERSHIP_DUES) PARTY_MEMBERSHIP_DUES,
+		       to_char(c.GMT_PAID_UNTIL,'yyyy-mm-dd') GMT_PAID_UNTIL,
+		       (select code_val from base_code where code = u.MARITAL_STATUS_ID) MARITAL_STATUS_ID,
+		       (select code_val from base_code where code = u.award_level_id) award_level_id,
+		      --  F_GetTableTextsByIds('base_code','code','code_val',u.SPECIAL_CROWD_IDS) SPECIAL_CROWD_IDS,
+		       case when CHILD_WORKING_SYS = 1 then '是' else '否' end CHILD_WORKING_SYS,
+		       (select code_val from base_code where code = u.archives_area_id) archives_area_id,to_char(u.ARCHIVES_BOOK_NUMBER) ARCHIVES_BOOK_NUMBER,
+		       f.USER_NAME as family_USER_NAME,
+		       (select code_val from base_code where code = f.APPELLATION_ID) APPELLATION_ID,f.CONTACT,u.SPECIAL_REMARK
+		       ${dynamicFields}
+		from retire_user u,
+		           retire_communist c,
+		           (select * from (select b.*,
+		                            (row_number() over(partition by user_id order by id)) rowval
+		                       from retire_family b) e
+		             where rowval = 1) f
+		     where u.id = c.user_id(+)
+		       and u.id = f.user_id(+)
+		       and u.retire_type_id = #{retire_type_id}
+		       AND (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9
+		order by u.RETIRE_TIME
+	 </select>
+</mapper>

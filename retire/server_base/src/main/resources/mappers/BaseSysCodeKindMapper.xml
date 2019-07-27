@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fjhcit.base.dao.BaseSysCodeKindDAO">
+	<resultMap id="CacheModelMap" type="com.fjhcit.model.CacheModel">
+		<id column="code" property="value" jdbcType="VARCHAR" />
+		<result column="code_val" property="name" jdbcType="VARCHAR" />
+		<result column="kd_code" property="kd_code" jdbcType="VARCHAR" />
+	<result column="code_superior" property="code_superior" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 缓存 -->
+	<select id="getCode" resultMap="CacheModelMap" parameterType="java.lang.String">
+		select code,code_val,kd_code,code_superior from BASE_CODE  where kd_code=#{code}
+	</select>
+	<!-- 数据字典 -->
+	<select id="getSysCodeKindInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_CODE_KIND where 1=1 
+		<include refid="SysCodeKindWhere"></include>
+		<!-- order by FIELD_SEQ_DISPLAY -->
+	</select>
+	<select id="getSysCodeKindCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_CODE_KIND where 1=1
+		<include refid="SysCodeKindWhere"></include>
+	</select>
+	<!-- 数据字典条件 -->
+	<sql id="SysCodeKindWhere">
+        <if test="kdCode != null and kdCode != ''"> 
+            AND KD_CODE = #{kdCode}
+        </if>
+        <if test="naCodeKind != null and naCodeKind != ''">
+        	AND (NA_CODE_KIND like '%'||#{naCodeKind}||'%')
+        </if>
+	</sql>
+	<!-- 编码验证 -->
+	<select id="checkSysCodeKindCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_CODE_KIND where KD_CODE = #{kdCode}
+	</select>
+	<!-- 删除数据字典及对应编码明细 -->
+	<delete id="deleteSysCodeKind" parameterType="java.util.Map">
+    	DELETE FROM BASE_CODE_KIND WHERE KD_CODE=#{kdCode}
+	</delete>
+	<delete id="deleteSysCode" parameterType="java.util.Map">
+    	DELETE FROM BASE_CODE WHERE KD_CODE=#{kdCode}
+	</delete>
+	<!-- 插入新增数据字典 -->
+	<insert id="addSysCodeKind" parameterType="java.util.Map">
+		Insert into BASE_CODE_KIND 
+		(KD_CODE,NA_CODE_KIND,FL_CODE)
+		values
+		(#{kdCode},#{naCodeKind},'0')
+	</insert>
+	<!-- 修改数据字典 -->
+	<update id="updateSysCodeKind">
+		UPDATE BASE_CODE_KIND SET NA_CODE_KIND=#{naCodeKind} Where KD_CODE = #{kdCode}
+	</update>
+   <!-- 数据字典明细 -->
+	<select id="getSysCodeInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_CODE where KD_CODE=#{kdCode}
+		order by SEQ_DISPLAY
+	</select>
+	<select id="getSysCodeCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_CODE where 1=1 AND KD_CODE=#{kdCode}
+	</select>
+	<!-- 插入新增数据字典 -->
+	<insert id="addSysCode" parameterType="java.util.Map">
+		Insert into BASE_CODE 
+		(KD_CODE,CODE,CODE_VAL,CODE_SUPERIOR,FL_AVAILABLE,SEQ_DISPLAY)
+		values
+		(#{KD_CODE},#{CODE},#{CODE_VAL},#{CODE_SUPERIOR,jdbcType=VARCHAR},#{FL_AVAILABLE},#{SEQ_DISPLAY,jdbcType=NUMERIC})
+	</insert>
+	<!-- 插入新增编码附加属性 -->
+	<insert id="addCodeAddiVal" parameterType="java.util.Map">
+		Insert into BASE_CODE_ADDI_VAL 
+		(KD_CODE,KD_CODE_ADDI,CODE,CODE_ADDI_VAL)
+		values
+		(#{KD_CODE},#{KD_CODE_ADDI},#{CODE},#{CODE_ADDI_VAL,jdbcType=VARCHAR})
+	</insert>
+	<!-- 插入新增编码拓展属性 -->
+	<insert id="addSysCodeAddI" parameterType="java.util.Map">
+		Insert into BASE_CODE_ADDI
+		(KD_CODE,KD_CODE_ADDI,NA_CODE_ADDI,SEQ_DISPLAY)
+		values
+		(#{KD_CODE},#{KD_CODE_ADDI},#{NA_CODE_ADDI},#{SEQ_DISPLAY,jdbcType=VARCHAR})
+	</insert>
+	<!-- 查询编码拓展属性 -->
+	<select id="selectKdCodeAddIByKdcode" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_CODE_ADDI where KD_CODE=#{kdCode}
+	</select>
+	<!-- 删除编码拓展属性-->
+	<delete id="deleteKdCodeAddIByKdcode" parameterType="java.lang.String">
+    	DELETE FROM BASE_CODE_ADDI WHERE KD_CODE=#{kdCode}
+	</delete>
+	<!-- 查询编码拓展属性的值 -->
+	<select id="selectKdCodeAddIValByKdcode" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_CODE_ADDI_VAL where KD_CODE=#{kdCode}
+	</select>
+	<!-- 删除编码拓展属性的值-->
+	<delete id="deleteCodeAddiVal" parameterType="java.lang.String">
+    	DELETE FROM BASE_CODE_ADDI_VAL WHERE KD_CODE=#{kdCode}
+	</delete>
+</mapper>

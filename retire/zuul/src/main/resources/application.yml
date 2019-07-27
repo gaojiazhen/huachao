@@ -1,0 +1,9 @@
+zuul:
+  routes:
+    base:
+      path: /base/**
+      service-id: base
+    retire: 
+      path: /retire/**
+      service-id: retirement
+    

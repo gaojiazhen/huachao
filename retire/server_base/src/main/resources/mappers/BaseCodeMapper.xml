@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 基础管理_代码设置_映射器
+@author 陈麟
+@date 2019年06月05日 上午09:57:20
+-->
+<mapper namespace="com.fjhcit.base.dao.BaseCodeDAO">
+
+	<!-- 查找基础管理_代码设置列表信息 -->
+	<select id="listBaseCode" resultType="com.fjhcit.entity.BaseCodeDO" parameterType="java.util.Map">
+        select code,kd_code,code_val,special_mark,FL_AVAILABLE,SEQ_DISPLAY,create_user_id,
+            to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modified
+		from base_code
+		<where>
+			<if test="kd_code != null and kd_code != ''">
+				and kd_code = #{kd_code}
+			</if>
+			<if test="special_mark != null and special_mark != ''">
+				and special_mark = #{special_mark}
+			</if>
+			<if test="unequal_special_mark != null and unequal_special_mark != ''">
+                and nvl(special_mark,99) != #{unequal_special_mark}
+            </if>
+
+			<if test="FL_AVAILABLE != null and FL_AVAILABLE != ''">
+                and FL_AVAILABLE = #{FL_AVAILABLE}
+            </if>
+			<if test="keyword == 'code_val'">
+				and code_val like '%' || #{code_val} || '%'
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by SEQ_DISPLAY
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 查找基础管理_代码设置单条信息 -->
+	<select id="getBaseCodeDOById" resultType="com.fjhcit.entity.BaseCodeDO" parameterType="java.lang.String">
+        select code,kd_code,code_val,special_mark,FL_AVAILABLE,SEQ_DISPLAY,create_user_id,
+            to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modified
+		from base_code where code=#{code}
+	</select>
+
+	<!-- 添加基础管理_代码设置信息 -->
+	<insert id="insertBaseCode" parameterType="com.fjhcit.entity.BaseCodeDO" >
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+			select seq_base_code.nextval as id from dual
+		</selectKey>
+		insert into base_code
+			select code,kd_code,code_val,special_mark,FL_AVAILABLE,SEQ_DISPLAY,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modifie)
+		values
+			(#{id},#{kd_code},#{code_val},#{special_mark},#{FL_AVAILABLE},#{SEQ_DISPLAY},#{create_user_id},
+			sysdate,#{modified_user_id},sysdate)
+	</insert>
+
+	<!-- 更新基础管理_代码设置信息 -->
+	<update id="updateBaseCode" parameterType="com.fjhcit.entity.BaseCodeDO">
+		update base_code
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="kd_code!=null">kd_code = #{kd_code},</if>
+			<if test="code_val!=null">code_val = #{code_val},</if>
+			<if test="special_mark!=null">special_mark = #{special_mark},</if>
+			<if test="FL_AVAILABLE!=null">FL_AVAILABLE = #{FL_AVAILABLE},</if>
+			<if test="SEQ_DISPLAY!=null">SEQ_DISPLAY = #{SEQ_DISPLAY},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除基础管理_代码设置信息 -->
+	<delete id="removeBaseCodeByIdsArr" parameterType="java.util.Map">
+		delete from base_code where code in
+		<foreach collection="idsArr" index="index" item="item" open="(" separator="," close=")">
+			#{idsArr}
+		</foreach>
+	</delete>
+	
+	<!-- 查找基础管理_代码设置列表信息 -->
+    <select id="getBaseCodeIdArray" resultType="java.lang.String" parameterType="java.util.Map">
+        select to_char(code) id from base_code
+        <where>
+            <if test="kd_code != null and kd_code != ''">
+                and kd_code = #{kd_code}
+            </if>
+            <if test="special_mark != null and special_mark != ''">
+                and special_mark = #{special_mark}
+            </if>
+            <if test="FL_AVAILABLE != null and FL_AVAILABLE != ''">
+                and FL_AVAILABLE = #{FL_AVAILABLE}
+            </if>
+            <if test="keyword == 'code_val'">
+                and code_val like '%' || #{code_val} || '%'
+            </if>
+        </where>
+        <choose>
+            <when test="sortField == 'gmt_create'">
+                order by gmt_create
+            </when>
+            <when test="sortField == 'gmt_modified'">
+                order by gmt_modified
+            </when>
+            <otherwise>
+                order by SEQ_DISPLAY
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 基础管理_登录人员表_映射器
+@author 陈麟
+@date 2019年06月03日 上午08:14:20
+-->
+<mapper namespace="com.fjhcit.base.dao.BaseUserDAO">
+    
+    <!-- 查登录人员信息 -->
+    <select id="getLoginUser" resultType="com.fjhcit.entity.BaseUserDO" parameterType="java.util.Map">
+        select id,user_type,unit_id,login_name,user_name,sex_id,idcard,phone,email,
+            to_char(update_password_time,'yyyy-mm-dd') as update_password_time,
+            to_char(online_time,'yyyy-mm-dd') as online_time,to_char(last_login_time,'yyyy-mm-dd') as last_login_time,
+            login_ip,state,error_count,to_char(locked_time,'yyyy-mm-dd') as locked_time,to_char(sleep_time,'yyyy-mm-dd') as sleep_time,
+            to_char(limit_time,'yyyy-mm-dd') as limit_time,browser,
+            (select department_name from base_department where id = t.unit_id) as unit_name
+        from base_user t 
+        where t.login_name=#{login_name} and t.login_password=#{login_password}
+    </select>
+    
+    <!-- 查登录人员的权限菜单列表 -->
+    <select id="listMenuByLoginUser" resultType="java.util.Map" parameterType="java.util.Map">
+        select to_char(m.id) as id,to_char(m.PARENT_ID) as pid,m.menu_name as title,
+		       m.menu_url as href,'' as icon,'false' as spread
+        from Base_Menu m, base_user_role_rela ur, base_role_menu_rela rm
+        where rm.menu_id = m.id
+		   and ur.role_id = rm.role_id
+		   and ur.user_id = #{id}
+ 		order by m.parent_id,m.sortnum
+        <!-- START WITH m.PARENT_ID = 0
+        CONNECT BY PRIOR m.ID = m.PARENT_ID
+        ORDER SIBLINGS BY m.SORTNUM -->
+    </select>
+
+	<!-- 查找基础管理_登录人员表列表信息 -->
+	<select id="listBaseUser" resultType="com.fjhcit.entity.BaseUserDO" parameterType="java.util.Map">
+		select id,user_type,unit_id,login_name,user_name,sex_id,idcard,phone,email,login_password,
+			integrality_password,to_char(update_password_time,'yyyy-mm-dd') as update_password_time,
+			to_char(online_time,'yyyy-mm-dd') as online_time,to_char(last_login_time,'yyyy-mm-dd') as last_login_time,
+			login_ip,state,error_count,to_char(locked_time,'yyyy-mm-dd') as locked_time,to_char(sleep_time,'yyyy-mm-dd') as sleep_time,
+			to_char(limit_time,'yyyy-mm-dd') as limit_time,browser,sortnum,create_user_id,to_char(gmt_create,'yyyy-mm-dd') as gmt_create,
+			modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modified
+		from base_user
+		<where>
+			<if test="user_type != null and user_type != ''">
+				and user_type = #{user_type}
+			</if>
+			<if test="unit_id != null and unit_id != ''">
+				and unit_id = #{unit_id}
+			</if>
+			<if test="sex_id != null and sex_id != ''">
+				and sex_id = #{sex_id}
+			</if>
+			<if test="create_user_id != null and create_user_id != ''">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+			<if test="keyword == 'login_name'">
+				and login_name like '%' || #{login_name} || '%'
+			</if>
+			<if test="keyword == 'user_name'">
+				and user_name like '%' || #{user_name} || '%'
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by id
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 查找基础管理_登录人员表单条信息 -->
+	<select id="getBaseUserDOById" resultType="com.fjhcit.entity.BaseUserDO" parameterType="java.lang.String">
+		select id,user_type,unit_id,login_name,user_name,sex_id,idcard,phone,email,login_password,
+			integrality_password,to_char(update_password_time,'yyyy-mm-dd') as update_password_time,
+			to_char(online_time,'yyyy-mm-dd') as online_time,to_char(last_login_time,'yyyy-mm-dd') as last_login_time,
+			login_ip,state,error_count,to_char(locked_time,'yyyy-mm-dd') as locked_time,to_char(sleep_time,'yyyy-mm-dd') as sleep_time,
+			to_char(limit_time,'yyyy-mm-dd') as limit_time,browser,sortnum,create_user_id,to_char(gmt_create,'yyyy-mm-dd') as gmt_create,
+			modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modified
+		from base_user where id=#{id}
+	</select>
+
+	<!-- 添加基础管理_登录人员表信息 -->
+	<insert id="insertBaseUser" parameterType="com.fjhcit.entity.BaseUserDO" >
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+			select seq_base_user.nextval as id from dual
+		</selectKey>
+		insert into base_user
+			(id,user_type,unit_id,login_name,user_name,sex_id,idcard,phone,email,login_password,
+			integrality_password,update_password_time,online_time,last_login_time,login_ip,state,error_count,locked_time,sleep_time,limit_time,
+			browser,sortnum,create_user_id,to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modifie)
+		values
+			(#{id},#{user_type},#{unit_id},#{login_name},#{user_name},#{sex_id},#{idcard},#{phone},#{email},#{login_password},
+			#{integrality_password},to_date(#{update_password_time},'yyyy-mm-dd hh24:mi:ss'),
+			to_date(#{online_time},'yyyy-mm-dd hh24:mi:ss'),to_date(#{last_login_time},'yyyy-mm-dd hh24:mi:ss'),#{login_ip},#{state},#{error_count},
+			to_date(#{locked_time},'yyyy-mm-dd hh24:mi:ss'),to_date(#{sleep_time},'yyyy-mm-dd hh24:mi:ss'),to_date(#{limit_time},'yyyy-mm-dd hh24:mi:ss'),
+			#{browser},#{sortnum},#{create_user_id},sysdate,#{modified_user_id},sysdate)
+	</insert> 
+
+	<!-- 根据用户ID_更新基础管理_登录人员表信息 -->
+	<update id="updateBaseUser" parameterType="com.fjhcit.entity.BaseUserDO">
+		update base_user
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="user_type != null">user_type = #{user_type},</if>
+			<if test="unit_id != null">unit_id = #{unit_id},</if>
+			<if test="login_name != null">login_name = #{login_name},</if>
+			<if test="user_name != null">user_name = #{user_name},</if>
+			<if test="sex_id != null">sex_id = #{sex_id},</if>
+			<if test="idcard != null">idcard = #{idcard},</if>
+			<if test="phone != null">phone = #{phone},</if>
+			<if test="email != null">email = #{email},</if>
+			<if test="login_password != null">login_password = #{login_password},</if>
+			<if test="integrality_password != null">integrality_password = #{integrality_password},</if>
+			<choose>
+                <when test="update_password_time == 'sysdate'">update_password_time = sysdate,</when>
+	            <when test="update_password_time != null">update_password_time = to_date(#{update_password_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+	        </choose>
+	        <choose>
+                <when test="online_time == 'sysdate'">online_time = sysdate,</when>
+                <when test="online_time != null">online_time = to_date(#{online_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="last_login_time == 'sysdate'">last_login_time = sysdate,</when>
+                <when test="last_login_time != null">last_login_time = to_date(#{last_login_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+			<if test="login_ip != null">login_ip = #{login_ip},</if>
+			<if test="state != null">state = #{state},</if>
+			<if test="error_count != null">error_count = #{error_count},</if>
+			<choose>
+                <when test="locked_time == 'sysdate'">locked_time = sysdate,</when>
+                <when test="locked_time != null">locked_time = to_date(#{locked_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="sleep_time == 'sysdate'">sleep_time = sysdate,</when>
+                <when test="sleep_time != null">sleep_time = to_date(#{sleep_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="limit_time == 'sysdate'">limit_time = sysdate,</when>
+                <when test="limit_time != null">limit_time = to_date(#{limit_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+			<if test="browser != null">browser = #{browser},</if>
+			<if test="sortnum != null">sortnum = #{sortnum},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+    <!-- 根据用户名_更新基础管理_登录人员表信息 -->
+    <update id="updateBaseUserByLoginName" parameterType="com.fjhcit.entity.BaseUserDO">
+        update base_user
+        <set>
+            MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+            <if test="user_type != null">user_type = #{user_type},</if>
+            <if test="unit_id != null">unit_id = #{unit_id},</if>
+            <if test="user_name != null">user_name = #{user_name},</if>
+            <if test="sex_id != null">sex_id = #{sex_id},</if>
+            <if test="idcard != null">idcard = #{idcard},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="login_password != null">login_password = #{login_password},</if>
+            <if test="integrality_password != null">integrality_password = #{integrality_password},</if>
+            <choose>
+                <when test="update_password_time == 'sysdate'">update_password_time = sysdate,</when>
+                <when test="update_password_time != null">update_password_time = to_date(#{update_password_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="online_time == 'sysdate'">online_time = sysdate,</when>
+                <when test="online_time != null">online_time = to_date(#{online_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="last_login_time == 'sysdate'">last_login_time = sysdate,</when>
+                <when test="last_login_time != null">last_login_time = to_date(#{last_login_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <if test="login_ip != null">login_ip = #{login_ip},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="error_count != null">error_count = #{error_count},</if>
+            <choose>
+                <when test="locked_time == 'sysdate'">locked_time = sysdate,</when>
+                <when test="locked_time != null">locked_time = to_date(#{locked_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="sleep_time == 'sysdate'">sleep_time = sysdate,</when>
+                <when test="sleep_time != null">sleep_time = to_date(#{sleep_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <choose>
+                <when test="limit_time == 'sysdate'">limit_time = sysdate,</when>
+                <when test="limit_time != null">limit_time = to_date(#{limit_time},'yyyy-mm-dd hh24:mi:ss'),</when>
+            </choose>
+            <if test="browser != null">browser = #{browser},</if>
+            <if test="sortnum != null">sortnum = #{sortnum},</if>
+        </set>
+        where login_name = #{login_name}
+    </update>
+
+	<!-- 删除基础管理_登录人员表信息 -->
+	<delete id="removeBaseUserByIds" parameterType="java.util.Map">
+		delete from base_user where id = #{id}
+		<foreach collection="idsArr" index="index" item="item" open="(" separator="," close=")">
+			#{idsArr}
+		</foreach>
+	</delete>
+</mapper>

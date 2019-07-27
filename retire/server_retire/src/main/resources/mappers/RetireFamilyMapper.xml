@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员_家庭主要成员表_映射器
+@author 陈麟
+@date 2019年06月13日 上午11:02:09
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetireFamilyDAO">
+
+	<!-- 查找离（退）休人员_家庭主要成员表列表信息 -->
+	<select id="listRetireFamily" resultType="com.fjhcit.entity.RetireFamilyDO" parameterType="java.util.Map">
+		select id,user_id,appellation_id,user_name,age,politics_status_id,work_unit_post,contact,remark
+		from retire_family
+		<where>
+			<if test="politics_status_id != null and politics_status_id != ''">
+				and politics_status_id = #{politics_status_id}
+			</if>
+			<if test="create_user_id != null and create_user_id != ''">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and user_id = #{user_id}
+			</if>
+			<if test="keyword == 'user_name'">
+				and user_name like '%' || #{user_name} || '%'
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by id
+			</otherwise>
+		</choose>
+		<choose>
+        	<when test="sortType == 'asc'">
+            	asc
+        	</when>
+        	<when test="sortType == 'desc'">
+            	desc
+        	</when>
+    	</choose>
+	</select>
+
+	<!-- 查找离（退）休人员_家庭主要成员表单条信息 -->
+	<select id="getRetireFamilyDOById" resultType="com.fjhcit.entity.RetireFamilyDO" parameterType="java.lang.String">
+		select id,user_id,appellation_id,user_name,age,politics_status_id,work_unit_post,contact,remark
+		from retire_family where id=#{id}
+	</select>
+
+	<!-- 添加离（退）休人员_家庭主要成员表信息 -->
+	<insert id="insertRetireFamily" parameterType="com.fjhcit.entity.RetireFamilyDO" >
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select seq_retire_family.nextval as id from dual
+        </selectKey>
+		insert into retire_family
+			(user_name,age,politics_status_id,work_unit_post,contact,create_user_id,gmt_create,modified_user_id,gmt_modified,id,
+			user_id,appellation_id,remark)
+		values
+			(#{user_name},#{age},#{politics_status_id},#{work_unit_post},#{contact},#{create_user_id},sysdate,#{modified_user_id},sysdate,#{id},
+			#{user_id},#{appellation_id},#{remark})
+	</insert> 
+
+	<!-- 更新离（退）休人员_家庭主要成员表信息 -->
+	<update id="updateRetireFamily" parameterType="com.fjhcit.entity.RetireFamilyDO">
+		update retire_family
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="user_name!=null">user_name = #{user_name},</if>
+			<if test="age!=null">age = #{age},</if>
+			<if test="politics_status_id!=null">politics_status_id = #{politics_status_id},</if>
+			<if test="work_unit_post!=null">work_unit_post = #{work_unit_post},</if>
+			<if test="contact!=null">contact = #{contact},</if>
+			<if test="user_id!=null">user_id = #{user_id},</if>
+			<if test="appellation_id!=null">appellation_id = #{appellation_id},</if>
+			<if test="remark!=null">remark = #{remark},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除离（退）休人员_家庭主要成员表信息 -->
+	<delete id="removeRetireFamilyByIdsArr" parameterType="java.util.Map">
+		delete from retire_family where id in 
+		<foreach collection="idsArr" index="index" item="item"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 根据user_id删除离（退）休人员_家庭主要成员表信息 -->
+    <delete id="removeRetireFamilyByUserid" parameterType="java.util.Map">
+        delete from retire_family where user_id = #{user_id}
+    </delete>
+</mapper>

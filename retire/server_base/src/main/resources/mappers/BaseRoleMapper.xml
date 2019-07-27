@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fjhcit.base.dao.BaseRoleDAO">
+	<!-- 角色信息 -->
+	<select id="roleInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_ROLE where 1=1 
+		<include refid="RoleWhere"></include>
+		<!-- order by FIELD_SEQ_DISPLAY -->
+	</select>
+	<select id="roleCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_ROLE where 1=1
+		<include refid="RoleWhere"></include>
+	</select>
+	<!-- 角色条件 -->
+	<sql id="RoleWhere">
+        <if test="ROLE_TYPE != null and ROLE_TYPE != ''"> 
+            AND ROLE_TYPE = #{ROLE_TYPE}
+        </if>
+        <if test="ROLE_NAME != null and ROLE_NAME != ''">
+        	AND (ROLE_NAME like '%'||#{ROLE_NAME}||'%')
+        </if>
+	</sql>
+	<!-- 角色名验证 -->
+	<select id="checkRoleCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_ROLE where ROLE_NAME = #{ROLE_NAME}
+	</select>
+	<!-- 删除角色 -->
+	<delete id="deleteRole" parameterType="java.util.Map">
+    	DELETE FROM BASE_ROLE WHERE ID=#{ID}
+	</delete>
+	<!-- 验证角色 -->
+	<select id="getRoleUserCount" resultType="java.lang.String" parameterType="java.lang.String">
+		select count(*) from BASE_USER_ROLE_RELA where ROLE_ID=#{roleId}
+	</select>
+	<!-- 插入新增角色 -->
+	<insert id="insertRole" parameterType="java.util.Map">
+		Insert into BASE_ROLE 
+		(ID,ROLE_NAME,ROLE_TYPE)
+		values
+		(SEQ_BASE_ROLE.nextval,#{ROLE_NAME},#{ROLE_TYPE})
+	</insert>
+	<!-- 角色菜单配置信息 -->
+	<select id="selectRoleMenu" resultType="java.util.Map" parameterType="java.util.Map">
+		select ID,PARENT_ID,MENU_NAME,MENU_TYPE from BASE_MENU where MENU_TYPE=#{ROLE_TYPE}
+	</select>
+	<!-- 角色已选菜单配置信息 -->
+	<select id="selectRoleMenuRela" resultType="java.util.Map" parameterType="java.util.Map">
+		select MENU_ID from BASE_ROLE_MENU_RELA t where ROLE_ID=#{ROLE_ID}
+	</select>
+	<!-- 删除角色已选菜单配置信息 -->
+	<delete id="deleteRoleMenuRela" parameterType="java.lang.String">
+		delete from BASE_ROLE_MENU_RELA where ROLE_ID=#{roleId}
+	</delete>
+	<!-- 插入角色已选菜单配置信息 -->
+	<insert id="addRoleMenuRela" parameterType="java.lang.String">
+		Insert into BASE_ROLE_MENU_RELA 
+		(ROLE_ID,MENU_ID)
+		values
+		(#{roleId},#{roleMenuId})
+	</insert>
+</mapper>

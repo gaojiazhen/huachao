@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fjhcit.base.dao.DepartmentMapper">
+	<resultMap id="CacheModelMap" type="com.fjhcit.model.CacheModel">
+	<id column="ID" property="value" jdbcType="VARCHAR" />
+	<result column="DEPARTMENT_NAME" property="name" jdbcType="VARCHAR" />
+	<result column="kd_code" property="kd_code" jdbcType="VARCHAR" />
+	<result column="PARENT_ID" property="code_superior" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 缓存 -->
+	<select id="getCode" resultMap="CacheModelMap" parameterType="java.lang.String">
+		select ID,DEPARTMENT_NAME,'DEPARTMENT' as kd_code,PARENT_ID from BASE_DEPARTMENT
+	</select>
+   <!-- 组织机构信息 -->
+	<select id="getDepartmentInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		select t.*,(select DEPARTMENT_NAME from BASE_DEPARTMENT where ID=t.PARENT_ID and ROWNUM=1) as depName from BASE_DEPARTMENT t where 1=1
+		<include refid="DepartmentWhere"></include>
+		<!-- order by FIELD_SEQ_DISPLAY -->
+	</select>
+	<select id="getdepartmentCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_DEPARTMENT t where PARENT_ID=#{ID}
+	</select>
+	<!-- 组织机构条件 -->
+	<sql id="DepartmentWhere">
+        <if test="DEPARTMENT_NAME != null and DEPARTMENT_NAME != ''"> 
+            AND (DEPARTMENT_NAME like '%'||#{DEPARTMENT_NAME}||'%')
+        </if>
+        <if test="PARENT_ID != null and PARENT_ID != ''"> 
+            AND PARENT_ID=#{PARENT_ID}
+        </if>
+        <if test="returnId != null and returnId != ''"> 
+             AND PARENT_ID =  (select PARENT_ID from BASE_DEPARTMENT where ID=#{returnId} and ROWNUM=1)
+        </if>
+	</sql>
+	<delete id="deleteDepartment" parameterType="java.util.Map">
+		DELETE FROM BASE_DEPARTMENT WHERE ID=#{ID}
+	</delete>
+	<!-- 插入新增组织机构 -->
+	<insert id="insertDepartment" parameterType="java.util.Map">
+		Insert into BASE_DEPARTMENT 
+		(ID,DEPARTMENT_NAME,PARENT_ID)
+		values
+		(#{ID},#{DEPARTMENT_NAME},#{PARENT_ID})
+	</insert>
+	<!-- 修改组织机构信息 -->
+	<update id="updateDepartment" parameterType="java.util.Map">
+		UPDATE 
+			BASE_DEPARTMENT
+		SET 
+			ID=#{ID},DEPARTMENT_NAME=#{DEPARTMENT_NAME},PARENT_ID=#{PARENT_ID}
+		Where 
+			ID = #{ID}
+	</update>
+	<!-- 验证编码重复 -->
+	<select id="checkDepCode" resultType="java.lang.String" parameterType="java.lang.String">
+		select count(*) from BASE_DEPARTMENT t where ID=#{depCode}
+	</select>
+	<!-- 插入新增数据字典 -->
+	<insert id="insertSysCode" parameterType="java.util.Map">
+		Insert into BASE_CODE 
+			(KD_CODE,CODE,CODE_VAL,CODE_SUPERIOR,FL_AVAILABLE)
+		values
+			('DEPARTMENT',#{ID},#{DEPARTMENT_NAME},#{PARENT_ID},'1')
+	</insert>
+	<!-- 修改数据字典 -->
+	<update id="updateSysCode" parameterType="java.util.Map">
+		UPDATE BASE_CODE SET 
+			CODE=#{ID},CODE_VAL=#{DEPARTMENT_NAME},CODE_SUPERIOR=#{PARENT_ID}
+		WHERE KD_CODE='DEPARTMENT' AND CODE=#{ID}
+	</update>
+	<!-- 删除数据字典及对应编码明细 -->
+	<delete id="removeSysCode" parameterType="java.util.Map">
+    	DELETE FROM BASE_CODE WHERE KD_CODE='DEPARTMENT' AND CODE=#{ID}
+	</delete>
+</mapper>

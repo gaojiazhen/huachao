@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员_在职人员通讯录库_映射器
+@author 陈麟
+@date 2019年06月14日 上午08:17:13
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetireContactDAO">
+
+	<!-- 查找离（退）休人员_在职人员通讯录库列表信息 -->
+	<select id="listRetireContact" resultType="com.fjhcit.entity.RetireContactDO" parameterType="java.util.Map">
+		select id,unit_id,department_id,user_name,sex_code,to_char(birth_date,'yyyy-mm-dd') as birth_date,idcard,office_duty,
+            user_nature_id,user_rank_id,work_seniority,dial_directly,system_number,phone,sortnum,
+            modified_user_id,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+--             (select code_name from base_code where id = c.user_nature_id) user_nature_name,
+--             (select special_mark from base_code where id = c.user_nature_id) user_nature_special_mark,
+--             (select code_name from base_code where id = c.user_rank_id) user_rank_name,
+--             (select user_name from base_user where id = c.modified_user_id) as modified_user_name,
+		education_code
+		from retire_contact c
+		<where>
+			<if test="unit_id != null and unit_id != ''">
+				and unit_id = #{unit_id}
+			</if>
+			<if test="department_id != null and department_id != ''">
+				and department_id = #{department_id}
+			</if>
+			<if test="user_nature_id != null and user_nature_id != ''">
+				and user_nature_id = #{user_nature_id}
+			</if>
+			<if test="user_rank_id != null and user_rank_id != ''">
+				and user_rank_id = #{user_rank_id}
+			</if>
+			<if test="create_user_id != null and create_user_id != ''">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+			<if test="keyword == 'user_name'">
+				and user_name like '%' || #{user_name} || '%'
+			</if>
+			<if test="userNameOrIdcard != null and userNameOrIdcard != ''">
+                and (user_name like '%' || #{userNameOrIdcard} || '%' or idcard like '%' || #{userNameOrIdcard} || '%'
+                or dial_directly like '%' || #{userNameOrIdcard} || '%'
+                or system_number like '%' || #{userNameOrIdcard} || '%'
+                or phone like '%' || #{userNameOrIdcard} || '%')
+            </if>
+		</where>
+		<choose>
+            <when test="sortField == 'user_name'">
+                order by user_name
+            </when>
+            <when test="sortField == 'idcard'">
+                order by idcard
+            </when>
+            <when test="sortField == 'birth_date'">
+                order by birth_date
+            </when>
+            <when test="sortField == 'work_seniority'">
+                order by work_seniority
+            </when>
+            <when test="sortField == 'dial_directly'">
+                order by dial_directly
+            </when>
+            <when test="sortField == 'system_number'">
+                order by system_number
+            </when>
+            <when test="sortField == 'phone'">
+                order by phone
+            </when>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by id
+			</otherwise>
+		</choose>
+		<choose>
+        	<when test="sortType == 'asc'">
+            	asc
+        	</when>
+        	<when test="sortType == 'desc'">
+            	desc
+        	</when>
+    	</choose>
+	</select>
+	
+	<!-- 根据身份证查询人员是否存在 -->
+    <select id="listRetireContactIdByIdcard" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select id from retire_contact where IDCARD = #{idcard}
+        <if test="id != null and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+
+	<!-- 查找离（退）休人员_在职人员通讯录库单条信息 -->
+	<select id="getRetireContactDOById" resultType="com.fjhcit.entity.RetireContactDO" parameterType="java.lang.String">
+		select id,unit_id,department_id,user_name,sex_code,to_char(birth_date,'yyyy-mm-dd') as birth_date,idcard,office_duty,
+            user_nature_id,user_rank_id,work_seniority,dial_directly,system_number,phone,sortnum,create_user_id,
+            to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,modified_user_id,
+            to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,education_code
+		from retire_contact where id=#{id}
+	</select>
+
+	<!-- 添加离（退）休人员_在职人员通讯录库信息 -->
+	<insert id="insertRetireContact" parameterType="com.fjhcit.entity.RetireContactDO" >
+		<selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+			select seq_retire_contact.nextval as id from dual
+		</selectKey>
+		insert into retire_contact
+			(id,unit_id,department_id,user_name,sex_code,birth_date,idcard,office_duty,user_nature_id,user_rank_id,work_seniority,
+			dial_directly,system_number,phone,sortnum,create_user_id,gmt_create,modified_user_id,gmt_modified,education_code)
+		values
+			(#{id},#{unit_id},#{department_id},#{user_name},#{sex_code},to_date(#{birth_date},'yyyy-mm-dd'),#{idcard},#{office_duty},#{user_nature_id},#{user_rank_id},#{work_seniority},
+			#{dial_directly},#{system_number},#{phone},#{sortnum},#{create_user_id},sysdate,#{modified_user_id},sysdate,#{education_code})
+	</insert> 
+
+	<!-- 更新离（退）休人员_在职人员通讯录库信息 -->
+	<update id="updateRetireContact" parameterType="com.fjhcit.entity.RetireContactDO">
+		update retire_contact
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="unit_id!=null">unit_id = #{unit_id},</if>
+			<if test="department_id!=null">department_id = #{department_id},</if>
+			<if test="user_name!=null">user_name = #{user_name},</if>
+			<if test="birth_date!=null">birth_date = to_date(#{birth_date},'yyyy-mm-dd'),</if>
+			<if test="idcard!=null">idcard = #{idcard},</if>
+			<if test="office_duty!=null">office_duty = #{office_duty},</if>
+			<if test="user_nature_id!=null">user_nature_id = #{user_nature_id},</if>
+			<if test="user_rank_id!=null">user_rank_id = #{user_rank_id},</if>
+			<if test="work_seniority!=null">work_seniority = #{work_seniority},</if>
+			<if test="dial_directly!=null">dial_directly = #{dial_directly},</if>
+			<if test="system_number!=null">system_number = #{system_number},</if>
+			<if test="phone!=null">phone = #{phone},</if>
+			<if test="sortnum!=null">sortnum = #{sortnum},</if>
+			<if test="education_code!=null">education_code = #{education_code},</if>
+			<if test="sex_code!=null">sex_code = #{sex_code}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除离（退）休人员_在职人员通讯录库信息 -->
+	<delete id="removeRetireContactByIdsArr" parameterType="java.util.Map">
+		delete from retire_contact where id in 
+		<foreach collection="idsArr" index="index" item="item"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 查找离（退）休人员_在职人员通讯录库_最大排序号 -->
+    <select id="getRetireContactNextSortnum" resultType="java.lang.String" parameterType="java.lang.String">
+        select NVL(MAX(SORTNUM),0)+1 from retire_contact where unit_id = #{unit_id}
+	</select>
+	
+    <!-- 查询国网统计报表_离退休工作人员统计 -->
+    <select id="listRetireContactStaff" resultType="java.util.Map" parameterType="java.util.Map" flushCache="true">
+        select c.code_val ${dynamicFields}
+            ,to_char((select count(1) from retire_contact where USER_NATURE_ID = c.code
+<![CDATA[   and to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy') <= 40   ]]>
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>)) as AGE_40,
+            to_char((select count(1) from retire_contact where USER_NATURE_ID = c.code
+<![CDATA[   and to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy') >= 41
+                and to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy') <= 50    ]]>
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>)) as AGE_41_50,
+            to_char((select count(1) from retire_contact where USER_NATURE_ID = c.code
+<![CDATA[   and to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy') >= 51
+            and to_char(sysdate, 'yyyy') - to_char(BIRTH_DATE, 'yyyy') <= 60     ]]>
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>)) as AGE_51_60,
+            to_char((select count(1) from retire_contact where USER_NATURE_ID = c.code
+<![CDATA[       and WORK_SENIORITY <= 5 ]]>
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>)) as WORK_SENIORITY_5,
+            to_char((select count(1) from retire_contact where USER_NATURE_ID = c.code
+<![CDATA[   and WORK_SENIORITY >= 6 and WORK_SENIORITY < 10     ]]>
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>)) as WORK_SENIORITY_6_10,
+            to_char((select count(1) from retire_contact where USER_NATURE_ID = c.code
+            and WORK_SENIORITY >= 10
+            <if test="unit_id != null and unit_id != ''">
+                and unit_id = #{unit_id}
+            </if>)) as WORK_SENIORITY_10
+        from base_code c
+        where kd_code = #{parent_id} and FL_AVAILABLE = 1
+        order by c.SEQ_DISPLAY
+	</select>
+</mapper>

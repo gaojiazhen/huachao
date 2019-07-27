@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fjhcit.base.dao.BaseMenuDAO">
+	<!-- 菜单管理 -->
+	<select id="getFindMenuParentmenu" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_MENU where 1=1 
+		<include refid="findMenuWhere"></include>
+		order by SORTNUM
+	</select>
+	<!-- 菜单管理条件 -->
+	<sql id="findMenuWhere">
+        <if test="MENU_NAME != null and MENU_NAME != ''"> 
+            AND (MENU_NAME like '%'||#{MENU_NAME}||'%')
+        </if>
+        <if test="PARENT_ID != null and PARENT_ID != ''"> 
+            AND PARENT_ID=#{PARENT_ID}
+        </if>
+        <!-- 返回ID -->
+        <if test="returnId != null and returnId != ''"> 
+             AND PARENT_ID =  (select PARENT_ID from BASE_MENU where ID=#{returnId} and ROWNUM=1)
+        </if>
+        <if test="MENU_TYPE != null and MENU_TYPE != ''">
+        	AND MENU_TYPE = #{MENU_TYPE}
+        </if>
+        <if test="MENU_EVENT_TYPE != null and MENU_EVENT_TYPE != ''">
+        	AND MENU_EVENT_TYPE = #{MENU_EVENT_TYPE}
+        </if>
+        <if test="TYPE != null and TYPE != ''"> 
+            AND TYPE = #{TYPE}
+        </if>
+	</sql>
+	<!-- 查询是否存在子菜单 -->
+	<select id="getFindMenuCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_MENU where PARENT_ID = #{ID}
+	</select>
+	<!-- 删除菜单 -->
+	<delete id="deleteMenu" parameterType="java.util.Map">
+    	DELETE FROM BASE_MENU WHERE ID=#{ID}
+	</delete>
+	<!-- 插入新增菜单 -->
+	<insert id="addMenu" parameterType="java.util.Map">
+		INSERT INTO BASE_MENU 
+			(ID,PARENT_ID,MENU_NAME,MENU_URL,MENU_TYPE,MENU_EVENT_TYPE,TYPE,SORTNUM)
+		values
+			(SEQ_BASE_MENU.nextval,#{PARENT_ID},#{MENU_NAME},#{MENU_URL},#{MENU_TYPE},#{MENU_EVENT_TYPE},#{TYPE},#{SORTNUM,jdbcType=NUMERIC})
+	</insert>
+	<!-- 修改菜单 -->
+	<update id="updateMenu" parameterType="java.util.Map">
+		UPDATE 
+			BASE_MENU 
+		SET 
+			MENU_NAME=#{MENU_NAME},MENU_URL=#{MENU_URL},MENU_TYPE=#{MENU_TYPE},MENU_EVENT_TYPE=#{MENU_EVENT_TYPE},TYPE=#{TYPE},SORTNUM=#{SORTNUM,jdbcType=NUMERIC} 
+		Where 
+			ID = #{ID}
+	</update>
+</mapper>

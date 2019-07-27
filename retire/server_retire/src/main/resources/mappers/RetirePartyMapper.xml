@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员_党组织设置情况库_映射器
+@author 陈麟
+@date 2019年06月17日 上午08:48:46
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetirePartyDAO">
+
+	<!-- 查找离（退）休人员_党组织设置情况库列表信息 -->
+	<select id="listRetireParty" resultType="com.fjhcit.entity.RetirePartyDO" parameterType="java.util.Map">
+		select id,unit_id,(select DEPARTMENT_NAME from BASE_DEPARTMENT where id = p.unit_id) as unit_name,
+	        <![CDATA[ 
+	        (select count(1) from RETIRE_USER t,retire_communist c
+         		where t.UNIT_ID = p.UNIT_ID and t.id = c.user_id and POLITICS_STATUS_ID = #{BASE_CODE_POLITICS_STATUS_COMMUNIST} 
+	        	and MEMBERSHIP_CREDENTIALS_ID = #{BASE_CODE_PARTY_LOCATED_COMPANY} and to_date(to_char(gmt_party,'yyyy-mm'),'yyyy-mm') <= to_date(#{gmt_statistics},'yyyy-mm')) company_party,
+            (select count(1) from RETIRE_USER t,retire_communist c
+         		where UNIT_ID = p.UNIT_ID and t.id = c.user_id and POLITICS_STATUS_ID = #{BASE_CODE_POLITICS_STATUS_COMMUNIST} 
+            	and MEMBERSHIP_CREDENTIALS_ID = #{BASE_CODE_PARTY_LOCATED_PLACE} and to_date(to_char(gmt_party,'yyyy-mm'),'yyyy-mm') <= to_date(#{gmt_statistics},'yyyy-mm')) place_party, ]]>
+            to_char(gmt_statistics,'yyyy-mm') as gmt_statistics,party_general_branch,party_branch_number,party_group_number,
+            quit_cadre_party_branch,retire_combine_number,retire_party_branch,quit_inservice_combine,
+			retire_inservice_combine,party_general_branch_secretary,party_general_branch_member,party_branch_secretary1,
+			branch_committee_member1,party_branch_secretary2,branch_committee_member2,party_branch_secretary3,branch_committee_member3,party_branch_secretary4,
+			branch_committee_member4,party_branch_secretary5,branch_committee_member5,party_branch_secretary6,branch_committee_member6,
+			party_branch_secretary7,branch_committee_member7,party_branch_secretary8,branch_committee_member8,party_branch_secretary9,
+			branch_committee_member9,party_branch_secretary10,branch_committee_member10,create_user_id,to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,
+			modified_user_id,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+            (select user_name from base_user where id = p.modified_user_id) as modified_user_name,
+	party_branch_secretary11,branch_committee_member11,party_branch_secretary12,branch_committee_member12,party_branch_secretary13,branch_committee_member13,
+	party_branch_secretary14,branch_committee_member14,party_branch_secretary15,branch_committee_member15
+
+		from retire_party p
+		<where>
+			<if test="unit_id != null and unit_id != ''">
+				and unit_id = #{unit_id}
+			</if>
+			<if test="gmt_statistics != null and gmt_statistics != ''">
+                and to_char(gmt_statistics,'fmyyyy-mm') = #{gmt_statistics}
+            </if>
+			<if test="create_user_id != null and create_user_id != ''">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by p.id
+			</otherwise>
+		</choose>
+		<choose>
+        	<when test="sortType == 'asc'">
+            	asc
+        	</when>
+        	<when test="sortType == 'desc'">
+            	desc
+        	</when>
+    	</choose>
+	</select>
+
+	<!-- 查找离（退）休人员_党组织设置情况库单条信息 -->
+	<select id="getRetirePartyDOById" resultType="com.fjhcit.entity.RetirePartyDO" parameterType="java.lang.String">
+		select id,unit_id,to_char(gmt_statistics,'yyyy-mm') as gmt_statistics,party_general_branch,party_branch_number,
+			party_group_number,quit_cadre_party_branch,retire_combine_number,retire_party_branch,quit_inservice_combine,
+			retire_inservice_combine,party_general_branch_secretary,party_general_branch_member,party_branch_secretary1,
+			branch_committee_member1,party_branch_secretary2,branch_committee_member2,party_branch_secretary3,branch_committee_member3,party_branch_secretary4,
+			branch_committee_member4,party_branch_secretary5,branch_committee_member5,party_branch_secretary6,branch_committee_member6,
+			party_branch_secretary7,branch_committee_member7,party_branch_secretary8,branch_committee_member8,party_branch_secretary9,
+			branch_committee_member9,party_branch_secretary10,branch_committee_member10,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+			party_branch_secretary11,branch_committee_member11,party_branch_secretary12,branch_committee_member12,party_branch_secretary13,branch_committee_member13,
+	party_branch_secretary14,branch_committee_member14,party_branch_secretary15,branch_committee_member15
+		from retire_party where id=#{id}
+	</select>
+
+	<!-- 添加离（退）休人员_党组织设置情况库信息 -->
+	<insert id="insertRetireParty" parameterType="com.fjhcit.entity.RetirePartyDO" >
+		<selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+			select seq_retire_party.nextval as id from dual
+		</selectKey>
+		insert into retire_party
+			(id,unit_id,gmt_statistics,party_general_branch,party_branch_number,party_group_number,
+			quit_cadre_party_branch,retire_combine_number,retire_party_branch,quit_inservice_combine,
+			retire_inservice_combine,party_general_branch_secretary,party_general_branch_member,party_branch_secretary1,
+			branch_committee_member1,party_branch_secretary2,branch_committee_member2,party_branch_secretary3,branch_committee_member3,party_branch_secretary4,
+			branch_committee_member4,party_branch_secretary5,branch_committee_member5,party_branch_secretary6,branch_committee_member6,
+			party_branch_secretary7,branch_committee_member7,party_branch_secretary8,branch_committee_member8,party_branch_secretary9,
+			branch_committee_member9,party_branch_secretary10,branch_committee_member10,create_user_id,gmt_create,modified_user_id,gmt_modified,
+			party_branch_secretary11,branch_committee_member11,party_branch_secretary12,branch_committee_member12,party_branch_secretary13,branch_committee_member13,
+			party_branch_secretary14,branch_committee_member14,party_branch_secretary15,branch_committee_member15
+			)
+		values
+			(#{id},#{unit_id},to_date(#{gmt_statistics},'yyyy-mm'),#{party_general_branch},#{party_branch_number},#{party_group_number},
+			#{quit_cadre_party_branch},#{retire_combine_number},#{retire_party_branch},#{quit_inservice_combine},
+			#{retire_inservice_combine},#{party_general_branch_secretary},#{party_general_branch_member},#{party_branch_secretary1},
+			#{branch_committee_member1},#{party_branch_secretary2},#{branch_committee_member2},#{party_branch_secretary3},#{branch_committee_member3},#{party_branch_secretary4},
+			#{branch_committee_member4},#{party_branch_secretary5},#{branch_committee_member5},#{party_branch_secretary6},#{branch_committee_member6},
+			#{party_branch_secretary7},#{branch_committee_member7},#{party_branch_secretary8},#{branch_committee_member8},#{party_branch_secretary9},
+			#{branch_committee_member9},#{party_branch_secretary10},#{branch_committee_member10},#{party_branch_secretary11},#{branch_committee_member11},
+			#{party_branch_secretary12},#{branch_committee_member12},#{party_branch_secretary13},#{branch_committee_member13},
+			#{party_branch_secretary14},#{branch_committee_member14},#{party_branch_secretary15},#{branch_committee_member15},
+			#{create_user_id},sysdate,#{modified_user_id},sysdate)
+	</insert> 
+
+	<!-- 更新离（退）休人员_党组织设置情况库信息 -->
+	<update id="updateRetireParty" parameterType="com.fjhcit.entity.RetirePartyDO">
+		update retire_party
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="unit_id!=null">unit_id = #{unit_id},</if>
+			<if test="gmt_statistics!=null">gmt_statistics = to_date(#{gmt_statistics},'yyyy-mm'),</if>
+			<if test="party_general_branch!=null">party_general_branch = #{party_general_branch},</if>
+			<if test="party_branch_number!=null">party_branch_number = #{party_branch_number},</if>
+			<if test="party_group_number!=null">party_group_number = #{party_group_number},</if>
+			<if test="quit_cadre_party_branch!=null">quit_cadre_party_branch = #{quit_cadre_party_branch},</if>
+			<if test="retire_combine_number!=null">retire_combine_number = #{retire_combine_number},</if>
+			<if test="retire_party_branch!=null">retire_party_branch = #{retire_party_branch},</if>
+			<if test="quit_inservice_combine!=null">quit_inservice_combine = #{quit_inservice_combine},</if>
+			<if test="retire_inservice_combine!=null">retire_inservice_combine = #{retire_inservice_combine},</if>
+			<if test="party_general_branch_secretary!=null">party_general_branch_secretary = #{party_general_branch_secretary},</if>
+			<if test="party_general_branch_member!=null">party_general_branch_member = #{party_general_branch_member},</if>
+			<if test="party_branch_secretary1!=null">party_branch_secretary1 = #{party_branch_secretary1},</if>
+			<if test="branch_committee_member1!=null">branch_committee_member1 = #{branch_committee_member1},</if>
+			<if test="party_branch_secretary2!=null">party_branch_secretary2 = #{party_branch_secretary2},</if>
+			<if test="branch_committee_member2!=null">branch_committee_member2 = #{branch_committee_member2},</if>
+			<if test="party_branch_secretary3!=null">party_branch_secretary3 = #{party_branch_secretary3},</if>
+			<if test="branch_committee_member3!=null">branch_committee_member3 = #{branch_committee_member3},</if>
+			<if test="party_branch_secretary4!=null">party_branch_secretary4 = #{party_branch_secretary4},</if>
+			<if test="branch_committee_member4!=null">branch_committee_member4 = #{branch_committee_member4},</if>
+			<if test="party_branch_secretary5!=null">party_branch_secretary5 = #{party_branch_secretary5},</if>
+			<if test="branch_committee_member5!=null">branch_committee_member5 = #{branch_committee_member5},</if>
+			<if test="party_branch_secretary6!=null">party_branch_secretary6 = #{party_branch_secretary6},</if>
+			<if test="branch_committee_member6!=null">branch_committee_member6 = #{branch_committee_member6},</if>
+			<if test="party_branch_secretary7!=null">party_branch_secretary7 = #{party_branch_secretary7},</if>
+			<if test="branch_committee_member7!=null">branch_committee_member7 = #{branch_committee_member7},</if>
+			<if test="party_branch_secretary8!=null">party_branch_secretary8 = #{party_branch_secretary8},</if>
+			<if test="branch_committee_member8!=null">branch_committee_member8 = #{branch_committee_member8},</if>
+			<if test="party_branch_secretary9!=null">party_branch_secretary9 = #{party_branch_secretary9},</if>
+			<if test="branch_committee_member9!=null">branch_committee_member9 = #{branch_committee_member9},</if>
+			<if test="party_branch_secretary10!=null">party_branch_secretary10 = #{party_branch_secretary10},</if>
+			<if test="branch_committee_member10!=null">branch_committee_member10 = #{branch_committee_member10},</if>
+			<if test="party_branch_secretary11!=null">party_branch_secretary11 = #{party_branch_secretary11},</if>
+			<if test="branch_committee_member11!=null">branch_committee_member11 = #{branch_committee_member11},</if>
+			<if test="party_branch_secretary12!=null">party_branch_secretary12 = #{party_branch_secretary12},</if>
+			<if test="branch_committee_member12!=null">branch_committee_member12 = #{branch_committee_member12},</if>
+			<if test="party_branch_secretary13!=null">party_branch_secretary13 = #{party_branch_secretary13},</if>
+			<if test="branch_committee_member13!=null">branch_committee_member13 = #{branch_committee_member13},</if>
+			<if test="party_branch_secretary14!=null">party_branch_secretary14 = #{party_branch_secretary14},</if>
+			<if test="branch_committee_member14!=null">branch_committee_member14 = #{branch_committee_member14},</if>
+			<if test="party_branch_secretary15!=null">party_branch_secretary15 = #{party_branch_secretary15},</if>
+			<if test="branch_committee_member15!=null">branch_committee_member15 = #{branch_committee_member15}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除离（退）休人员_党组织设置情况库信息 -->
+	<delete id="removeRetirePartyByIdsArr" parameterType="java.util.Map">
+		delete from retire_party where id in 
+		<foreach collection="idsArr" index="index" item="item"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 查找基础管理_组织机构列表信息 -->
+    <select id="listBaseDepartment" resultType="com.fjhcit.entity.BaseDepartmentDO" parameterType="java.util.Map">
+        select d.id,department_name,short_name,parent_id,is_available,sortnum,p.id party_id
+        from base_department d,retire_party p
+        where d.id = p.unit_id(+) and d.IS_AVAILABLE = 1
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        <if test="gmt_statistics != null and gmt_statistics != ''">
+            and to_char(p.gmt_statistics(+),'fmyyyy-mm') = #{gmt_statistics}
+        </if>
+        order by sortnum
+    </select>
+    
+    <!-- 查询国网统计报表_离退休党组织设置统计 -->
+    <select id="listRetirePartyOrganization" resultType="java.util.Map" parameterType="java.util.Map">
+        select DEPARTMENT_NAME,to_char(PARTY_GENERAL_BRANCH) PARTY_GENERAL_BRANCH,to_char(PARTY_BRANCH_NUMBER) PARTY_BRANCH_NUMBER,
+            to_char(QUIT_CADRE_PARTY_BRANCH) QUIT_CADRE_PARTY_BRANCH,to_char(RETIRE_COMBINE_NUMBER) RETIRE_COMBINE_NUMBER,
+            to_char(RETIRE_PARTY_BRANCH) RETIRE_PARTY_BRANCH,to_char(QUIT_INSERVICE_COMBINE) QUIT_INSERVICE_COMBINE,
+            to_char(RETIRE_INSERVICE_COMBINE) RETIRE_INSERVICE_COMBINE,to_char(PARTY_GROUP_NUMBER) PARTY_GROUP_NUMBER
+        from base_department d,retire_party p 
+        <choose>
+            <when test="unit_id != null and unit_id != ''">
+                where d.id = p.unit_id and d.id = #{id}
+            </when>
+            <otherwise>
+                where d.id = p.unit_id(+)
+            </otherwise>
+        </choose>
+        and d.IS_AVAILABLE = 1
+        <if test="parent_id != null and parent_id != ''">
+            and parent_id = #{parent_id}
+        </if>
+        <if test="gmt_statistics != null and gmt_statistics != ''">
+            and to_char(gmt_statistics(+),'fmyyyy-mm') = #{gmt_statistics}
+        </if>
+        order by d.sortnum
+    </select>
+</mapper>

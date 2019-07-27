@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fjhcit.base.dao.BaseUserControlDAO">
+	<!-- 用户管理 -->
+	<select id="userControlInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_USER where 1=1 
+		<include refid="UserControlWhere"></include>
+		<!-- order by FIELD_SEQ_DISPLAY -->
+	</select>
+	<select id="userControlCount" resultType="java.lang.String" parameterType="java.util.Map">
+		select count(*) from BASE_USER where 1=1
+		<include refid="UserControlWhere"></include>
+	</select>
+	<!-- 用户管理条件 -->
+	<sql id="UserControlWhere">
+        <if test="LOGIN_NAME != null and LOGIN_NAME != ''"> 
+            AND LOGIN_NAME = #{LOGIN_NAME}
+        </if>
+        <if test="DEPT_ID.size()>0"> 
+            AND DEPARTMENT in <foreach collection="DEPT_ID" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+        </if>
+        <!-- <if test="ids.size()>0"> 
+            AND DEPT_ID in <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+        </if> -->
+        <if test="USER_NAME != null and USER_NAME != ''">
+        	AND (USER_NAME like '%'||#{USER_NAME}||'%')
+        </if>
+	</sql>
+	
+	<!-- 用户角色配置信息 -->
+	<select id="selectUserRole" resultType="java.util.Map">
+		select 
+			ID,ROLE_NAME,ROLE_TYPE 
+		from 
+			BASE_ROLE
+	</select>
+	<!-- 用户已选角色配置信息 -->
+	<select id="selectUserRoleRela" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			ROLE_ID 
+		from 
+			BASE_USER_ROLE_RELA
+		where 
+			USER_ID=#{userId}
+	</select>
+	<!-- 删除用户已选角色配置信息 -->
+	<delete id="removeUserRoleRela" parameterType="java.lang.String">
+		delete from 
+			BASE_USER_ROLE_RELA 
+		where 
+			USER_ID=#{userId}
+	</delete>
+	<!-- 插入用户已选角色配置信息 -->
+	<insert id="addUserRoleRela" parameterType="java.lang.String">
+		Insert into BASE_USER_ROLE_RELA 
+			(USER_ID,ROLE_ID)
+		values
+			(#{userId},#{roleId})
+	</insert>
+	
+	<!-- 用户已选部门配置信息 -->
+	<select id="selectUserDepRela" resultType="java.util.Map" parameterType="java.lang.String">
+		select 
+			DEP_ID 
+		from 
+			BASE_USER_DEP_RELA
+		where 
+			USER_ID=#{userId}
+	</select>
+	<!-- 删除用户已选部门配置信息 -->
+	<delete id="removeUserDepRela" parameterType="java.lang.String">
+		delete from 
+			BASE_USER_DEP_RELA 
+		where 
+			USER_ID=#{userId}
+	</delete>
+	<!-- 插入用户已选部门配置信息 -->
+	<insert id="addUserDepRela" parameterType="java.lang.String">
+		Insert into BASE_USER_DEP_RELA 
+			(USER_ID,DEP_ID)
+		values
+			(#{userId},#{depId})
+	</insert>
+	<!-- 修改用户密码 -->
+	<update id="updateUserPwd" parameterType="java.lang.String">
+		UPDATE 
+			BASE_USER SET LOGIN_PASSWORD=#{pwd} 
+		WHERE
+			ID=#{userId} 
+	</update>
+	<!-- 验证用户管理员 -->
+	<select id="verifyUserAdmin" resultType="java.lang.String" parameterType="java.lang.String">
+		select 
+			count(*) 
+		from 
+			BASE_USER_ROLE_RELA b
+		where 
+			user_id = #{userId}  
+		and 
+			'2' =(select r.role_type from BASE_ROLE r where r.id = b.role_id)
+	</select>
+	<!-- 验证用户角色 -->
+	<select id="verifyUserRole" resultType="java.lang.String" parameterType="java.lang.String">
+		select 
+			ROLE_TYPE 
+		from 
+			BASE_ROLE
+		where 
+			ID in <foreach collection="roleId" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+	</select>
+	<!-- 根据用户ID改变用户状态 -->
+	<update id="updateStateByUserId" parameterType="java.lang.String">
+		UPDATE 
+			BASE_USER SET STATE=#{updateState,jdbcType=VARCHAR}
+		WHERE
+			ID=#{userId}
+	</update>
+	<!-- 根据用户ID获取用户密码 -->
+	<select id="checkPwd" resultType="java.lang.String" parameterType="java.lang.String">
+		select 
+			LOGIN_PASSWORD 
+		from 
+			BASE_USER 
+		where 
+			ID = #{id}
+	</select>
+</mapper>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员_中共党员基本情况登记表_映射器
+@author 陈麟
+@date 2019年06月11日 下午20:53:24
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetireCommunistDAO">
+
+	<!-- 查找离（退）休人员_中共党员基本情况登记表列表信息 -->
+	<select id="listRetireCommunist" resultType="com.fjhcit.entity.RetireCommunistDO" parameterType="java.util.Map">
+		select c.id,u.id as user_id,category_personnel,party_branch,to_char(gmt_party,'yyyy-mm-dd') as gmt_party,
+			to_char(gmt_become,'yyyy-mm-dd') as gmt_become,operating_post,membership_credentials_id,work_unit_post,place_detailed,
+			party_membership,party_post,decode(substr(party_membership_dues,1,1),'.','0'||party_membership_dues,party_membership_dues) party_membership_dues,
+			to_char(gmt_paid_until,'yyyy-mm-dd') as gmt_paid_until,is_missing,to_char(gmt_missing,'yyyy-mm-dd') as gmt_missing,
+			is_flow_communist,go_out_flow_direction,c.create_user_id,to_char(c.gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,
+			c.modified_user_id,to_char(c.gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+			<!--(select user_name from base_user where base_user.user_type = c.create_user_id) as create_user_name,
+			(select user_name from base_user where base_user.user_type = c.modified_user_id) as modified_user_name,-->
+			u.user_name as user_name,u.sex_id as sex_id,
+        <!-- (select code_val from base_code where d.code = u.sex_id) as sex_name, -->
+			to_char(birth_date,'yyyy-mm-dd') as birth_date,(select code_val from base_code where d.code = u.nation_id) as nation_name,u.native_place native_place,
+		<!--     (select special_mark from base_code where id = c.membership_credentials_id) as membership_credentials_mark,
+            (select code_name from base_code where id = c.membership_credentials_id) as membership_credentials_name,
+            (select code_name from base_code where id = u.marital_status_id) as marital_status_name, -->
+            u.residence_address,u.unit_id,u.idcard
+        from retire_communist c, retire_user u , base_code d
+        where c.user_id(+) = u.id and u.POLITICS_STATUS_ID = d.code and d.SPECIAL_MARK = '1'
+        <if test="user_id != null and user_id != ''">
+            and user_id = #{user_id}
+        </if>
+        <if test="unit_id != null and unit_id != ''">
+            and u.unit_id = #{unit_id}
+        </if>
+        <if test="start_party_time != null and start_party_time != ''">
+            and c.GMT_PARTY >= to_date(#{start_party_time},'yyyy-mm-dd')
+        </if>
+        <if test="end_party_time != null and end_party_time != ''">
+            <![CDATA[ and c.GMT_PARTY <= to_date(#{end_party_time},'yyyy-mm-dd') ]]>
+        </if>
+        <if test="userNameOrIdcard != null and userNameOrIdcard != ''">
+            and (user_name like '%' || #{userNameOrIdcard} || '%' or idcard like '%' || #{userNameOrIdcard} || '%')
+        </if>
+        <choose>
+            <when test="sortField == 'user_name'">
+                order by user_name
+            </when>
+            <when test="sortField == 'idcard'">
+                order by idcard
+            </when>
+            <when test="sortField == 'gmt_party'">
+                order by GMT_PARTY
+            </when>
+            <when test="sortField == 'gmt_become'">
+                order by gmt_become
+            </when>
+            <when test="sortField == 'gmt_paid_until'">
+                order by c.gmt_paid_until
+            </when>
+            <when test="sortField == 'gmt_modified'">
+                order by c.gmt_modified
+            </when>
+            <otherwise>
+                <!-- 没有登记的默认排在前面 -->
+				order by c.id desc
+			</otherwise>
+		</choose>
+        <choose>
+            <when test="sortType == 'asc'">
+                asc
+            </when>
+            <when test="sortType == 'desc'">
+                desc
+            </when>
+        </choose>
+	</select>
+
+	<!-- 查找离（退）休人员_中共党员基本情况登记表单条信息 -->
+	<select id="getRetireCommunistDOById" resultType="com.fjhcit.entity.RetireCommunistDO" parameterType="java.lang.String">
+		select c.id,user_id,category_personnel,party_branch,to_char(gmt_party,'yyyy-mm-dd') as gmt_party,
+			to_char(gmt_become,'yyyy-mm-dd') as gmt_become,operating_post,membership_credentials_id,work_unit_post,place_detailed,
+			party_membership,party_post,decode(substr(party_membership_dues,1,1),'.','0'||party_membership_dues,party_membership_dues) party_membership_dues,
+			to_char(gmt_paid_until,'yyyy-mm-dd') as gmt_paid_until,is_missing,to_char(gmt_missing,'yyyy-mm-dd') as gmt_missing,
+			is_flow_communist,go_out_flow_direction,c.create_user_id,to_char(c.gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,
+			c.modified_user_id,to_char(c.gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+			(select user_name from base_user where id = c.create_user_id) as create_user_name,
+			(select user_name from base_user where id = c.modified_user_id) as modified_user_name,
+            (select special_mark from base_code where code = c.membership_credentials_id) as membership_credentials_mark
+		from retire_communist c where id=#{id}
+	</select>
+	
+	<!-- 根据user_id查找离（退）休人员_中共党员基本情况登记表单条信息 -->
+    <select id="getRetireCommunistDOByUserid" resultType="com.fjhcit.entity.RetireCommunistDO" parameterType="java.lang.String">
+		select c.id,user_id,category_personnel,party_branch,to_char(gmt_party,'yyyy-mm-dd') as gmt_party,
+			to_char(gmt_become,'yyyy-mm-dd') as gmt_become,operating_post,membership_credentials_id,work_unit_post,place_detailed,
+			party_membership,party_post,decode(substr(party_membership_dues,1,1),'.','0'||party_membership_dues,party_membership_dues) party_membership_dues,
+			to_char(gmt_paid_until,'yyyy-mm-dd') as gmt_paid_until,is_missing,to_char(gmt_missing,'yyyy-mm-dd') as gmt_missing,
+			is_flow_communist,go_out_flow_direction,c.create_user_id,to_char(c.gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,
+			c.modified_user_id,to_char(c.gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+			(select user_name from base_user where id = c.create_user_id) as create_user_name,
+			(select user_name from base_user where id = c.modified_user_id) as modified_user_name,
+            (select special_mark from base_code where code = c.membership_credentials_id) as membership_credentials_mark
+        from retire_communist c where user_id = #{user_id}
+    </select>
+
+	<!-- 添加离（退）休人员_中共党员基本情况登记表信息 -->
+	<insert id="insertRetireCommunist" parameterType="com.fjhcit.entity.RetireCommunistDO" >
+		<selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+			select seq_retire_communist.nextval as id from dual
+		</selectKey>
+		insert into retire_communist
+			(id,user_id,category_personnel,party_branch,gmt_party,gmt_become,operating_post,membership_credentials_id,
+			work_unit_post,place_detailed,party_membership,party_post,party_membership_dues,gmt_paid_until,is_missing,
+			gmt_missing,is_flow_communist,go_out_flow_direction,create_user_id,gmt_create,modified_user_id,gmt_modified)
+		values
+			(#{id},#{user_id},#{category_personnel},#{party_branch},to_date(#{gmt_party},'yyyy-mm-dd'),to_date(#{gmt_become},'yyyy-mm-dd'),
+			#{operating_post},#{membership_credentials_id},#{work_unit_post},#{place_detailed},#{party_membership},#{party_post},
+			#{party_membership_dues},to_date(#{gmt_paid_until},'yyyy-mm-dd'),#{is_missing},to_date(#{gmt_missing},'yyyy-mm-dd'),
+			#{is_flow_communist},#{go_out_flow_direction},#{create_user_id},sysdate,#{modified_user_id},sysdate)
+	</insert> 
+
+	<!-- 更新离（退）休人员_中共党员基本情况登记表信息 -->
+	<update id="updateRetireCommunist" parameterType="com.fjhcit.entity.RetireCommunistDO">
+		update retire_communist
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="user_id!=null">user_id = #{user_id},</if>
+			<if test="category_personnel!=null">category_personnel = #{category_personnel},</if>
+			<if test="party_branch!=null">party_branch = #{party_branch},</if>
+			<if test="gmt_party!=null">gmt_party = to_date(#{gmt_party},'yyyy-mm-dd'),</if>
+			<if test="gmt_become!=null">gmt_become = to_date(#{gmt_become},'yyyy-mm-dd'),</if>
+			<if test="operating_post!=null">operating_post = #{operating_post},</if>
+			<if test="membership_credentials_id!=null">membership_credentials_id = #{membership_credentials_id},</if>
+			<if test="work_unit_post!=null">work_unit_post = #{work_unit_post},</if>
+			<if test="place_detailed!=null">place_detailed = #{place_detailed},</if>
+			<if test="party_membership!=null">party_membership = #{party_membership},</if>
+			<if test="party_post!=null">party_post = #{party_post},</if>
+			<if test="party_membership_dues!=null">party_membership_dues = #{party_membership_dues},</if>
+			<if test="gmt_paid_until!=null">gmt_paid_until = to_date(#{gmt_paid_until},'yyyy-mm-dd'),</if>
+			<if test="is_missing!=null">is_missing = #{is_missing},</if>
+			<if test="gmt_missing!=null">gmt_missing = to_date(#{gmt_missing},'yyyy-mm-dd'),</if>
+			<if test="is_flow_communist!=null">is_flow_communist = #{is_flow_communist},</if>
+			<if test="go_out_flow_direction!=null">go_out_flow_direction = #{go_out_flow_direction},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除离（退）休人员_中共党员基本情况登记表信息 -->
+	<delete id="removeRetireCommunistByIdsArr" parameterType="java.util.Map">
+		delete from retire_communist where id in 
+		<foreach collection="idsArr" index="index" item="item"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+</mapper>

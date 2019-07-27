@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员_单位运行成本费用_映射器
+@author 陈麟
+@date 2019年06月24日 上午11:57:51
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetireCostDAO">
+
+	<!-- 查找离（退）休人员_单位运行成本费用列表信息 -->
+	<select id="listRetireCost" resultType="com.fjhcit.entity.RetireCostDO" parameterType="java.util.Map">
+		select id,unit_id,year,utilities,emolument,depreciation,chummage,office_allowance,travel_expense,
+			convention_expense,publicity_expense,train_expense,train_count,train_man_time,train_other,
+			other,remark,expense_total,supplementary_medical,
+			monthly_living_allowance,one_time_living_allowance,medical_fee,modified_user_id,
+			activity_funds,subsidies_for_heating,other_expenses,retire_basic_pension,basic_local_pension,
+			create_user_id,to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,
+			to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified
+		from retire_cost
+		<where>
+			<if test="unit_id != null and unit_id != ''">
+				and unit_id = #{unit_id}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+			<if test="create_user_id != null and create_user_id != ''">
+				and create_user_id = #{create_user_id}
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by id
+			</otherwise>
+		</choose>
+		<choose>
+        	<when test="sortType == 'asc'">
+            	asc
+        	</when>
+        	<when test="sortType == 'desc'">
+            	desc
+        	</when>
+    	</choose>
+	</select>
+
+	<!-- 查找离（退）休人员_单位运行成本费用单条信息 -->
+	<select id="getRetireCostDOById" resultType="com.fjhcit.entity.RetireCostDO" parameterType="java.lang.String">
+		select to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,id,unit_id,year,utilities,emolument,
+			depreciation,chummage,office_allowance,travel_expense,convention_expense,publicity_expense,
+			train_expense,train_count,train_man_time,train_other,other,
+			remark,expense_total,supplementary_medical,monthly_living_allowance,one_time_living_allowance,medical_fee,modified_user_id,
+			activity_funds,subsidies_for_heating,other_expenses,basic_local_pension,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create
+		from retire_cost where id=#{id}
+	</select>
+
+	<!-- 添加离（退）休人员_单位运行成本费用信息 -->
+	<insert id="insertRetireCost" parameterType="com.fjhcit.entity.RetireCostDO" >
+		<selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+			select seq_retire_cost.nextval as id from dual
+		</selectKey>
+		insert into retire_cost
+			(gmt_modified,id,unit_id,year,utilities,emolument,depreciation,chummage,office_allowance,travel_expense,
+			convention_expense,publicity_expense,train_expense,train_count,train_man_time,train_other,
+			other,remark,expense_total,supplementary_medical,monthly_living_allowance,
+			one_time_living_allowance,medical_fee,modified_user_id,
+			activity_funds,subsidies_for_heating,other_expenses,retire_basic_pension,basic_local_pension,create_user_id,gmt_create)
+		values
+			(sysdate,#{id},#{unit_id},#{year},#{utilities},#{emolument},#{depreciation},#{chummage},#{office_allowance},#{travel_expense},
+			#{convention_expense},#{publicity_expense},#{train_expense},#{train_count},#{train_man_time},#{train_other},
+			#{other},#{remark},#{expense_total},#{supplementary_medical},
+			#{monthly_living_allowance},#{one_time_living_allowance},#{medical_fee},#{modified_user_id},
+			#{activity_funds},#{subsidies_for_heating},#{other_expenses},#{retire_basic_pension},#{basic_local_pension},#{create_user_id},sysdate)
+	</insert> 
+
+	<!-- 更新离（退）休人员_单位运行成本费用信息 -->
+	<update id="updateRetireCost" parameterType="com.fjhcit.entity.RetireCostDO">
+		update retire_cost
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="unit_id!=null">unit_id = #{unit_id},</if>
+			<if test="year!=null">year = #{year},</if>
+			<if test="utilities!=null">utilities = #{utilities},</if>
+			<if test="emolument!=null">emolument = #{emolument},</if>
+			<if test="depreciation!=null">depreciation = #{depreciation},</if>
+			<if test="chummage!=null">chummage = #{chummage},</if>
+			<if test="office_allowance!=null">office_allowance = #{office_allowance},</if>
+			<if test="travel_expense!=null">travel_expense = #{travel_expense},</if>
+			<if test="convention_expense!=null">convention_expense = #{convention_expense},</if>
+			<if test="publicity_expense!=null">publicity_expense = #{publicity_expense},</if>
+			<if test="other!=null">other = #{other},</if>
+			<if test="remark!=null">remark = #{remark},</if>
+			<if test="expense_total!=null">expense_total = #{expense_total},</if>
+			<if test="supplementary_medical!=null">supplementary_medical = #{supplementary_medical},</if>
+			<if test="monthly_living_allowance!=null">monthly_living_allowance = #{monthly_living_allowance},</if>
+			<if test="one_time_living_allowance!=null">one_time_living_allowance = #{one_time_living_allowance},</if>
+			<if test="medical_fee!=null">medical_fee = #{medical_fee},</if>
+			<if test="activity_funds!=null">activity_funds = #{activity_funds},</if>
+			<if test="subsidies_for_heating!=null">subsidies_for_heating = #{subsidies_for_heating},</if>
+			<if test="other_expenses!=null">other_expenses = #{other_expenses},</if>
+			<if test="retire_basic_pension">retire_basic_pension = #{retire_basic_pension},</if>
+			<if test="basic_local_pension!=null">basic_local_pension = #{basic_local_pension},</if>
+			
+			<if test="train_expense!=null">train_expense = #{train_expense},</if>
+			<if test="train_count!=null">train_count = #{train_count},</if>
+			<if test="train_man_time!=null">train_man_time = #{train_man_time},</if>
+			<if test="train_other!=null">train_other = #{train_other},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除离（退）休人员_单位运行成本费用信息 -->
+	<delete id="removeRetireCostByIdsArr" parameterType="java.util.Map">
+		delete from retire_cost where id in 
+		<foreach collection="idsArr" index="index" item="item"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 查找国网统计报表_退休人员管理费用统计 -->
+	<select id="listRetireEmployeeCost" resultType="java.util.Map" parameterType="java.util.Map" flushCache="true">
+		select d.id as UNIT_ID,d.DEPARTMENT_NAME
+			${dynamicFields}
+       		,C.ID,to_char(decode(substr(UTILITIES,1,1),'.','0'||UTILITIES,UTILITIES)) UTILITIES,
+       		to_char(decode(substr(EMOLUMENT,1,1),'.','0'||EMOLUMENT,EMOLUMENT)) EMOLUMENT,
+       		to_char(decode(substr(DEPRECIATION,1,1),'.','0'||DEPRECIATION,DEPRECIATION)) DEPRECIATION,
+       		to_char(decode(substr(CHUMMAGE,1,1),'.','0'||CHUMMAGE,CHUMMAGE)) CHUMMAGE,
+       		to_char(decode(substr(OFFICE_ALLOWANCE,1,1),'.','0'||OFFICE_ALLOWANCE,OFFICE_ALLOWANCE)) OFFICE_ALLOWANCE,
+       		to_char(decode(substr(TRAVEL_EXPENSE,1,1),'.','0'||TRAVEL_EXPENSE,TRAVEL_EXPENSE)) TRAVEL_EXPENSE,
+			to_char(decode(substr(CONVENTION_EXPENSE,1,1),'.','0'||CONVENTION_EXPENSE,CONVENTION_EXPENSE)) CONVENTION_EXPENSE,
+			to_char(decode(substr(PUBLICITY_EXPENSE,1,1),'.','0'||PUBLICITY_EXPENSE,PUBLICITY_EXPENSE)) PUBLICITY_EXPENSE,
+			to_char(decode(substr(train_expense,1,1),'.','0'||train_expense,train_expense)) TRAIN_EXPENSE,
+			to_char(train_count) TRAIN_COUNT,to_char(train_man_time) TRAIN_MAN_TIME,to_char(train_other) TRAIN_OTHER,
+			to_char(decode(substr(OTHER,1,1),'.','0'||OTHER,OTHER)) OTHER,REMARK
+		from base_department d,retire_cost c where d.id = c.unit_id(+) and d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and d.id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and d.parent_id = #{parent_id}
+        </if>
+        <if test="year != null and year != ''">
+            and c.year (+)= #{year}
+        </if>
+        order by d.sortnum
+	</select>
+	
+	<!-- 查找离（退）休人员_单位运行成本费用单条信息 -->
+	<select id="getRetireCostDOByUnitidAndYear" resultType="com.fjhcit.entity.RetireCostDO" parameterType="java.lang.String">
+		select id,unit_id,year,utilities,emolument,depreciation,chummage,office_allowance,travel_expense,
+			convention_expense,publicity_expense,train_expense,train_count,train_man_time,train_other,
+			other,remark,expense_total,supplementary_medical,monthly_living_allowance,
+			one_time_living_allowance,medical_fee,modified_user_id,
+			activity_funds,subsidies_for_heating,other_expenses,retire_basic_pension,basic_local_pension
+		from retire_cost where unit_id=#{unit_id} and year=#{year} 
+	</select>
+	
+	<!-- 查询国网统计报表_基本养老保险及档案统计 -->
+    <select id="listRetireBasicEndowmentInsurance" parameterType="java.util.Map" resultType="java.util.Map" flushCache="true">
+        select d.id as UNIT_ID,d.DEPARTMENT_NAME,
+       		to_char((select count(1) from retire_user u where unit_id = d.id and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9)) RETIRE_TOTAL,
+<![CDATA[   to_char((select count(1) from retire_user u where unit_id = d.id and (select nvl(special_mark,0) from base_code where code = u.HEALTH_STATUS) != 9 and to_char(retire_time,'yyyy') < 1998)) RETIRE_1998,   ]]>
+       		to_char(decode(substr(RETIRE_BASIC_PENSION,1,1),'.','0'||RETIRE_BASIC_PENSION,RETIRE_BASIC_PENSION)) RETIRE_BASIC_PENSION,
+       		to_char(decode(substr(BASIC_LOCAL_PENSION,1,1),'.','0'||BASIC_LOCAL_PENSION,BASIC_LOCAL_PENSION)) BASIC_LOCAL_PENSION
+            ${dynamicFields}
+        from base_department d, RETIRE_COST c
+		where d.id = c.unit_id(+) and c.year(+) = to_char(sysdate,'yyyy') and d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and d.id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and d.parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+    
+	<!-- 查询国网统计报表_退休人员相关费用情况表 -->
+    <select id="listRetireUserCorrelativeCharges" parameterType="java.util.Map" resultType="java.util.Map">
+        select d.id as UNIT_ID,d.DEPARTMENT_NAME,
+        	to_char(decode(substr(SUPPLEMENTARY_MEDICAL,1,1),'.','0'||SUPPLEMENTARY_MEDICAL,SUPPLEMENTARY_MEDICAL)) SUPPLEMENTARY_MEDICAL,
+        	to_char(decode(substr(MONTHLY_LIVING_ALLOWANCE,1,1),'.','0'||MONTHLY_LIVING_ALLOWANCE,MONTHLY_LIVING_ALLOWANCE)) MONTHLY_LIVING_ALLOWANCE,
+        	to_char(decode(substr(ONE_TIME_LIVING_ALLOWANCE,1,1),'.','0'||ONE_TIME_LIVING_ALLOWANCE,ONE_TIME_LIVING_ALLOWANCE)) ONE_TIME_LIVING_ALLOWANCE,
+        	to_char(decode(substr(MEDICAL_FEE,1,1),'.','0'||MEDICAL_FEE,MEDICAL_FEE)) MEDICAL_FEE,
+			to_char(decode(substr(ACTIVITY_FUNDS,1,1),'.','0'||ACTIVITY_FUNDS,ACTIVITY_FUNDS)) ACTIVITY_FUNDS,
+			to_char(decode(substr(SUBSIDIES_FOR_HEATING,1,1),'.','0'||SUBSIDIES_FOR_HEATING,SUBSIDIES_FOR_HEATING)) SUBSIDIES_FOR_HEATING,
+			to_char(decode(substr(OTHER_EXPENSES,1,1),'.','0'||OTHER_EXPENSES,OTHER_EXPENSES)) OTHER_EXPENSES
+        from base_department d, RETIRE_COST c
+		where d.id = c.unit_id(+) and c.year(+) = #{year} and d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and d.id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and d.parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+    
+   	<!-- 查询国网统计报表_离退休工作机构情况 -->
+    <select id="listRetireDepartmentAndCost" parameterType="java.util.Map" resultType="java.util.Map">
+        select D.DEPARTMENT_NAME,
+        	to_char(decode(substr(train_expense,1,1),'.','0'||train_expense,train_expense)) TRAIN_EXPENSE,
+			to_char(train_count) TRAIN_COUNT,to_char(train_man_time) TRAIN_MAN_TIME,to_char(train_other) TRAIN_OTHER
+        	${dynamicFields}
+        from base_department d, 
+        	(select unit_id,train_expense,train_count,train_man_time,train_other from RETIRE_COST where year = to_char(sysdate,'yyyy')) c
+		where d.id = c.unit_id(+)
+		and d.IS_AVAILABLE = 1
+        <if test="id != null and id != ''">
+            and d.id = #{id}
+        </if>
+        <if test="parent_id != null and parent_id != ''">
+            and d.parent_id = #{parent_id}
+        </if>
+        order by sortnum
+    </select>
+</mapper>

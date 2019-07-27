@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 离（退）休人员_离休人员库_映射器
+@author 陈麟
+@date 2019年06月28日 上午09:19:27
+-->
+<mapper namespace="com.fjhcit.retire.dao.RetireQuitDAO">
+
+	<!-- 查找信息库管理_离休人员登记_列表数据 -->
+	<select id="listRetireQuitUser" resultType="com.fjhcit.entity.RetireQuitDO" parameterType="java.util.Map">
+		select q.id,u.id as user_id,
+			decode(substr(monthly_income,1,1),'.','0'||monthly_income,monthly_income) monthly_income,
+			decode(substr(basic_expenses,1,1),'.','0'||basic_expenses,basic_expenses) basic_expenses,
+			decode(substr(province_subsidy,1,1),'.','0'||province_subsidy,province_subsidy) province_subsidy,
+			decode(substr(other_subsidy,1,1),'.','0'||other_subsidy,other_subsidy) other_subsidy,
+			decode(substr(self_employed_fee,1,1),'.','0'||self_employed_fee,self_employed_fee) self_employed_fee,
+			decode(substr(nursing_fee,1,1),'.','0'||nursing_fee,nursing_fee) nursing_fee,
+			decode(substr(car_fare,1,1),'.','0'||car_fare,car_fare) car_fare,children_number,
+			raising_a_child_number,spouse_situation,q.spouse_name,to_char(spouse_birth_date,'yyyy-mm-dd') as spouse_birth_date,spouse_is_work,
+			spouse_department_name,spouse_settlement,
+			decode(substr(regular_subsidy,1,1),'.','0'||regular_subsidy,regular_subsidy) regular_subsidy,
+			q.spouse_contact,q.modified_user_id,to_char(q.gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified,
+			(select user_name from base_user where id = q.modified_user_id) as modified_user_name,u.sex_id,
+		<!-- 		(select code_name from base_code where id = u.sex_id) as sex_name,-->
+			u.user_name,u.idcard
+        from retire_quit q, retire_user u, base_code c
+            where q.user_id(+) = u.id and u.retire_type_id = c.code and c.special_mark = '1'
+            <if test="unit_id != null and unit_id != ''">
+                and u.unit_id = #{unit_id}
+            </if>
+            <if test="start_retire_time != null and start_retire_time != ''">
+                and retire_time >= to_date(#{start_retire_time},'yyyy-mm-dd')
+            </if>
+            <if test="end_retire_time != null and end_retire_time != ''">
+                   <![CDATA[ and retire_time <= to_date(#{end_retire_time},'yyyy-mm-dd') ]]>
+            </if>
+            <if test="userNameOrIdcard != null and userNameOrIdcard != ''">
+                and (user_name like '%' || #{userNameOrIdcard} || '%' or idcard like '%' || #{userNameOrIdcard} || '%')
+            </if>
+            <choose>
+                <when test="sortField == 'gmt_create'">
+                    order by gmt_create
+                </when>
+                <when test="sortField == 'gmt_modified'">
+                    order by gmt_modified
+                </when>
+                <otherwise>
+                    <!-- 没有登记的默认排在前面 -->
+				order by q.id desc
+			</otherwise>
+		</choose>
+		<choose>
+        	<when test="sortType == 'asc'">
+            	asc
+        	</when>
+        	<when test="sortType == 'desc'">
+            	desc
+        	</when>
+    	</choose>
+	</select>
+
+	<!-- 查找离（退）休人员_离休人员库列表信息 -->
+	<select id="listRetireQuit" resultType="com.fjhcit.entity.RetireQuitDO" parameterType="java.util.Map">
+		select id,user_id,decode(substr(monthly_income,1,1),'.','0'||monthly_income,monthly_income) monthly_income,
+			decode(substr(basic_expenses,1,1),'.','0'||basic_expenses,basic_expenses) basic_expenses,
+			decode(substr(province_subsidy,1,1),'.','0'||province_subsidy,province_subsidy) province_subsidy,
+			decode(substr(other_subsidy,1,1),'.','0'||other_subsidy,other_subsidy) other_subsidy,
+			decode(substr(self_employed_fee,1,1),'.','0'||self_employed_fee,self_employed_fee) self_employed_fee,
+			decode(substr(nursing_fee,1,1),'.','0'||nursing_fee,nursing_fee) nursing_fee,
+			decode(substr(car_fare,1,1),'.','0'||car_fare,car_fare) car_fare,children_number,
+			raising_a_child_number,spouse_situation,q.spouse_name,to_char(spouse_birth_date,'yyyy-mm-dd') as spouse_birth_date,spouse_is_work,
+			spouse_department_name,spouse_settlement,
+			decode(substr(regular_subsidy,1,1),'.','0'||regular_subsidy,regular_subsidy) regular_subsidy,spouse_contact,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified
+		from retire_quit q
+		<where>
+			<if test="user_id != null and user_id != ''">
+				and user_id = #{user_id}
+			</if>
+			<if test="create_user_id != null and create_user_id != ''">
+				and create_user_id = #{create_user_id}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+			<if test="keyword == 'spouse_name'">
+				and spouse_name like '%' || #{spouse_name} || '%'
+			</if>
+			<if test="keyword == 'spouse_department_name'">
+				and spouse_department_name like '%' || #{spouse_department_name} || '%'
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by id
+			</otherwise>
+		</choose>
+		<choose>
+        	<when test="sortType == 'asc'">
+            	asc
+        	</when>
+        	<when test="sortType == 'desc'">
+            	desc
+        	</when>
+    	</choose>
+	</select>
+
+	<!-- 查找离（退）休人员_离休人员库单条信息 -->
+	<select id="getRetireQuitDOById" resultType="com.fjhcit.entity.RetireQuitDO" parameterType="java.lang.String">
+		select id,user_id,decode(substr(monthly_income,1,1),'.','0'||monthly_income,monthly_income) monthly_income,
+			decode(substr(basic_expenses,1,1),'.','0'||basic_expenses,basic_expenses) basic_expenses,
+			decode(substr(province_subsidy,1,1),'.','0'||province_subsidy,province_subsidy) province_subsidy,
+			decode(substr(other_subsidy,1,1),'.','0'||other_subsidy,other_subsidy) other_subsidy,
+			decode(substr(self_employed_fee,1,1),'.','0'||self_employed_fee,self_employed_fee) self_employed_fee,
+			decode(substr(nursing_fee,1,1),'.','0'||nursing_fee,nursing_fee) nursing_fee,
+			decode(substr(car_fare,1,1),'.','0'||car_fare,car_fare) car_fare,children_number,
+			raising_a_child_number,spouse_situation,q.spouse_name,to_char(spouse_birth_date,'yyyy-mm-dd') as spouse_birth_date,spouse_is_work,
+			spouse_department_name,spouse_settlement,
+			decode(substr(regular_subsidy,1,1),'.','0'||regular_subsidy,regular_subsidy) regular_subsidy,spouse_contact,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified
+		from retire_quit q where id=#{id}
+	</select>
+	
+	<!-- 查找离（退）休人员_离休人员库单条信息 -->
+	<select id="getRetireQuitDOByUserid" resultType="com.fjhcit.entity.RetireQuitDO" parameterType="java.lang.String">
+		select id,user_id,decode(substr(monthly_income,1,1),'.','0'||monthly_income,monthly_income) monthly_income,
+			decode(substr(basic_expenses,1,1),'.','0'||basic_expenses,basic_expenses) basic_expenses,
+			decode(substr(province_subsidy,1,1),'.','0'||province_subsidy,province_subsidy) province_subsidy,
+			decode(substr(other_subsidy,1,1),'.','0'||other_subsidy,other_subsidy) other_subsidy,
+			decode(substr(self_employed_fee,1,1),'.','0'||self_employed_fee,self_employed_fee) self_employed_fee,
+			decode(substr(nursing_fee,1,1),'.','0'||nursing_fee,nursing_fee) nursing_fee,
+			decode(substr(car_fare,1,1),'.','0'||car_fare,car_fare) car_fare,children_number,
+			raising_a_child_number,spouse_situation,q.spouse_name,to_char(spouse_birth_date,'yyyy-mm-dd') as spouse_birth_date,spouse_is_work,
+			spouse_department_name,spouse_settlement,
+			decode(substr(regular_subsidy,1,1),'.','0'||regular_subsidy,regular_subsidy) regular_subsidy,spouse_contact,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd hh24:mi') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd hh24:mi') as gmt_modified
+		from retire_quit q where user_id=#{user_id}
+	</select>
+
+	<!-- 添加离（退）休人员_离休人员库信息 -->
+	<insert id="insertRetireQuit" parameterType="com.fjhcit.entity.RetireQuitDO" >
+		<selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+			select seq_retire_quit.nextval as id from dual
+		</selectKey>
+		insert into retire_quit
+			(id,user_id,monthly_income,basic_expenses,province_subsidy,other_subsidy,
+			self_employed_fee,nursing_fee,car_fare,children_number,
+			raising_a_child_number,spouse_situation,spouse_name,spouse_birth_date,spouse_is_work,
+			spouse_department_name,spouse_settlement,regular_subsidy,spouse_contact,create_user_id,
+			gmt_create,modified_user_id,gmt_modified)
+		values
+			(#{id},#{user_id},#{monthly_income},#{basic_expenses},#{province_subsidy},#{other_subsidy},
+			#{self_employed_fee},#{nursing_fee},#{car_fare},#{children_number},
+			#{raising_a_child_number},#{spouse_situation},#{spouse_name},to_date(#{spouse_birth_date},'yyyy-mm-dd'),#{spouse_is_work},
+			#{spouse_department_name},#{spouse_settlement},#{regular_subsidy},#{spouse_contact},#{create_user_id},
+			sysdate,#{modified_user_id},sysdate)
+	</insert> 
+
+	<!-- 更新离（退）休人员_离休人员库信息 -->
+	<update id="updateRetireQuit" parameterType="com.fjhcit.entity.RetireQuitDO">
+		update retire_quit
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="user_id!=null">user_id = #{user_id},</if>
+			<if test="monthly_income!=null">monthly_income = #{monthly_income},</if>
+			<if test="basic_expenses!=null">basic_expenses = #{basic_expenses},</if>
+			<if test="province_subsidy!=null">province_subsidy = #{province_subsidy},</if>
+			<if test="other_subsidy!=null">other_subsidy = #{other_subsidy},</if>
+			<if test="self_employed_fee!=null">self_employed_fee = #{self_employed_fee},</if>
+			<if test="nursing_fee!=null">nursing_fee = #{nursing_fee},</if>
+			<if test="car_fare!=null">car_fare = #{car_fare},</if>
+			<if test="children_number!=null">children_number = #{children_number},</if>
+			<if test="raising_a_child_number!=null">raising_a_child_number = #{raising_a_child_number},</if>
+			<if test="spouse_situation!=null">spouse_situation = #{spouse_situation},</if>
+			<if test="spouse_name!=null">spouse_name = #{spouse_name},</if>
+			<if test="spouse_birth_date!=null">spouse_birth_date = to_date(#{spouse_birth_date},'yyyy-mm-dd'),</if>
+			<if test="spouse_is_work!=null">spouse_is_work = #{spouse_is_work},</if>
+			<if test="spouse_department_name!=null">spouse_department_name = #{spouse_department_name},</if>
+			<if test="spouse_settlement!=null">spouse_settlement = #{spouse_settlement},</if>
+			<if test="regular_subsidy!=null">regular_subsidy = #{regular_subsidy},</if>
+			<if test="spouse_contact!=null">spouse_contact = #{spouse_contact},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除离（退）休人员_离休人员库信息 -->
+	<delete id="removeRetireQuitByIdsArr" parameterType="java.util.Map">
+		delete from retire_quit where id in 
+		<foreach collection="idsArr" index="index" item="item"  open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+</mapper>

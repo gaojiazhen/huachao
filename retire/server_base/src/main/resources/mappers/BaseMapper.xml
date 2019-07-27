@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fjhcit.base.dao.BaseMapper">
+	<resultMap type="com.fjhcit.entity.BaseUserDO" id="BaseResultMap">
+		<id jdbcType="VARCHAR" property="id" column="id"/>
+		<result jdbcType="VARCHAR" property="loginName" column="login_name"/>
+		<result jdbcType="VARCHAR" property="user_type" column="user_type"/>
+		<result jdbcType="VARCHAR" property="unit_id" column="unit_id"/>
+		<result jdbcType="VARCHAR" property="department_id" column="department_id"/>
+		<result jdbcType="VARCHAR" property="login_name" column="login_name"/>
+		<result jdbcType="VARCHAR" property="user_name" column="user_name"/>
+		<result jdbcType="VARCHAR" property="sex_id" column="sex_id"/>
+		<result jdbcType="VARCHAR" property="idcard" column="idcard"/>
+		<result jdbcType="VARCHAR" property="phone" column="phone"/>
+		<result jdbcType="VARCHAR" property="email" column="email"/>
+		<result jdbcType="VARCHAR" property="login_password" column="login_password"/>
+		<result jdbcType="VARCHAR" property="integrality_password" column="integrality_password"/>
+		<result jdbcType="VARCHAR" property="update_password_time" column="update_password_time"/>
+		<result jdbcType="VARCHAR" property="online_time" column="online_time"/>
+		<result jdbcType="VARCHAR" property="last_login_time" column="last_login_time"/>
+		<result jdbcType="VARCHAR" property="login_ip" column="login_ip"/>
+		<result jdbcType="VARCHAR" property="state" column="state"/>
+		<result jdbcType="VARCHAR" property="error_count" column="error_count"/>
+		<result jdbcType="VARCHAR" property="locked_time" column="locked_time"/>
+		<result jdbcType="VARCHAR" property="sleep_time" column="sleep_time"/>
+		<result jdbcType="VARCHAR" property="limit_time" column="limit_time"/>
+		<result jdbcType="VARCHAR" property="browser" column="browser"/>
+		<result jdbcType="VARCHAR" property="sortnum" column="sortnum"/>
+		<result jdbcType="VARCHAR" property="create_user_id" column="create_user_id"/>
+		<result jdbcType="VARCHAR" property="gmt_create" column="gmt_create"/>
+		<result jdbcType="VARCHAR" property="modified_user_id" column="modified_user_id"/>
+		<result jdbcType="VARCHAR" property="gmt_modified" column="gmt_modified"/>
+		<result jdbcType="VARCHAR" property="age" column="age"/>
+	</resultMap>
+	
+	<resultMap type="com.fjhcit.model.CacheModel" id="CacheModelMap">
+		<id jdbcType="VARCHAR" property="value" column="code"/>
+		<result jdbcType="VARCHAR" property="name" column="code_val"/>
+		<result jdbcType="VARCHAR" property="kd_code" column="kd_code"/>
+		<result jdbcType="VARCHAR" property="code_superior" column="code_superior"/>
+		<result jdbcType="VARCHAR" property="special_mark" column="special_mark"/>
+	</resultMap>
+	<select id="findAll" resultMap="BaseResultMap">
+		select * from BASE_USER order by id desc
+	</select>
+	<select id="findRole" resultType="java.util.Map">
+		select * from BASE_ROLE 
+	</select>
+	<select id="findMenu" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT distinct t.menu_name as title,
+			t.menu_url as href,
+			'' as  icon,
+			'false' as spread,
+			t.PARENT_ID as pid,
+			t.id as id
+		from
+			BASE_MENU  t,
+			BASE_users_role_rela rela,
+			BASE_role_MENU_rela  k
+		where rela.role_id = k.role_id
+			and k.menu_id = t.id	
+			and rela.user_id=#{id} 
+			and t.type=1
+	</select>
+	<select id="login" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select * from BASE_USER t where t.login_name=#{userName}  and t.LOGIN_PASSWORD=#{pwd} order  by id desc
+	</select>
+	<select id="getMuneListByUserId" resultType="java.util.Map" parameterType="java.lang.Integer">
+		select 
+			distinct  t.*
+		from
+			BASE_menu  t,
+			BASE_users_role_rela rela,
+			BASE_role_MENU_rela  k
+		where 
+			rela.role_id = k.role_id
+			and k.menu_id = t.id	
+			and rela.user_id=#{id}
+   </select>
+   
+	<select id="getDataRangetByUserId" resultType="java.lang.String" parameterType="java.lang.Integer">
+   		SELECT T.DEP_ID FROM BASE_USER_DEP_RELA T where t.user_id=#{id} 
+	</select>
+   
+   	<select id="findUser"  resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_USER 
+		where 1=1 
+		<if test="name != null and name != ''"> 
+            AND login_name = #{name}
+        </if>
+	</select>
+   
+	<select id="findUser2"  resultType="java.util.Map" parameterType="java.util.Map">
+		select * from BASE_USER where 1=1 
+	</select>
+	<sql id='TABLE_SEQUENCE'>
+		SEQ_AUDIT.nextval
+	</sql>
+	  <insert id="addUser" parameterType="java.util.Map">
+        <selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+            select
+            <include refid="TABLE_SEQUENCE" />
+            from dual
+        </selectKey>
+       insert into BASE_USER (ID, LOGIN_NAME, LOGIN_PASSWORD, AGE, ADD_TIME)
+values (#{id}, #{name}, #{pwd}, #{age}, sysdate)
+        
+       
+    </insert>
+    
+     <update  id="updateUser" parameterType="java.util.Map">
+        
+ 
+         update BASE_USER
+        <set>
+            <if test="name != null and name != ''">LOGIN_NAME=#{name},</if>
+            <if test="age != null and age != ''">AGE=#{age},</if>
+           
+        </set>
+       where ID=#{id}
+    </update>
+    
+    <delete id="removeUser" parameterType="java.lang.String">
+    DELETE FROM BASE_USER WHERE ID=#{id}
+</delete>
+	<!-- 根据用户名改变用户状态 -->
+	<update id="updateStateByUserName" parameterType="java.lang.String">
+		UPDATE 
+			BASE_USER SET STATE=#{updateState,jdbcType=VARCHAR}
+		WHERE
+			LOGIN_NAME=#{userName}
+	</update>
+	<!-- 根据用户ID改变登录时间 -->
+	<update id="updateLastLoginTimeByUserId" parameterType="java.util.Map">
+		UPDATE 
+			BASE_USER SET LAST_LOGIN_TIME=#{toDay,jdbcType=DATE}
+		WHERE
+			ID=#{userId}
+	</update>
+	
+	<select id="getCode" parameterType="java.lang.String" resultMap="CacheModelMap">
+		select code,code_val,kd_code,code_superior,special_mark from BASE_CODE where kd_code=#{code} and FL_AVAILABLE = 1
+		order by CAST(seq_display AS INTEGER)
+	</select>
+	
+</mapper>

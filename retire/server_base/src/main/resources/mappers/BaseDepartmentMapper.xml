@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+@description 基础管理_组织机构_映射器
+@author 陈麟
+@date 2019年06月04日 下午19:49:25
+-->
+<mapper namespace="com.fjhcit.base.dao.BaseDepartmentDAO">
+
+	<!-- 查找基础管理_组织机构列表信息 -->
+	<select id="listBaseDepartment" resultType="com.fjhcit.entity.BaseDepartmentDO" parameterType="java.util.Map">
+        select id,department_name,short_name,parent_id,is_available,sortnum,create_user_id,
+            to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modified
+		from base_department
+		<where>
+			<if test="parent_id != null and parent_id != ''">
+				and parent_id = #{parent_id}
+			</if>
+			<if test="is_available != null and is_available != ''">
+				and is_available = #{is_available}
+			</if>
+			<if test="modified_user_id != null and modified_user_id != ''">
+				and modified_user_id = #{modified_user_id}
+			</if>
+			<if test="keyword == 'department_name'">
+				and department_name like '%' || #{department_name} || '%'
+			</if>
+			<if test="keyword == 'short_name'">
+				and short_name like '%' || #{short_name} || '%'
+			</if>
+		</where>
+		<choose>
+			<when test="sortField == 'gmt_create'">
+				order by gmt_create
+			</when>
+			<when test="sortField == 'gmt_modified'">
+				order by gmt_modified
+			</when>
+			<otherwise>
+				order by id
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 查找基础管理_组织机构单条信息 -->
+	<select id="getBaseDepartmentDOById" resultType="com.fjhcit.entity.BaseDepartmentDO" parameterType="java.lang.String">
+        select id,department_name,short_name,parent_id,is_available,sortnum,create_user_id,
+			to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modified
+		from base_department where id=#{id}
+	</select>
+
+	<!-- 添加基础管理_组织机构信息 -->
+	<insert id="insertBaseDepartment" parameterType="com.fjhcit.entity.BaseDepartmentDO" >
+		<selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+			select seq_base_department.nextval as id from dual
+		</selectKey>
+		insert into base_department
+			select id,department_name,short_name,parent_id,is_available,sortnum,create_user_id,to_char(gmt_create,'yyyy-mm-dd') as gmt_create,modified_user_id,to_char(gmt_modified,'yyyy-mm-dd') as gmt_modifie)
+		values
+			(#{id},#{department_name},#{short_name},#{parent_id},#{is_available},#{sortnum},#{create_user_id},sysdate,#{modified_user_id},sysdate)
+	</insert> 
+
+	<!-- 更新基础管理_组织机构信息 -->
+	<update id="updateBaseDepartment" parameterType="com.fjhcit.entity.BaseDepartmentDO">
+		update base_department
+		<set>
+			MODIFIED_USER_ID = #{modified_user_id},GMT_MODIFIED = sysdate,
+			<if test="department_name!=null">department_name = #{department_name},</if>
+			<if test="short_name!=null">short_name = #{short_name},</if>
+			<if test="parent_id!=null">parent_id = #{parent_id},</if>
+			<if test="is_available!=null">is_available = #{is_available},</if>
+			<if test="sortnum!=null">sortnum = #{sortnum},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!-- 删除基础管理_组织机构信息 -->
+	<delete id="removeBaseDepartmentByIdsArr" parameterType="java.util.Map">
+		delete from base_department where id in 
+		<foreach collection="idsArr" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+    <!-- 根据主键ID串数组_查找基础管理_组织机构列表信息 -->
+    <select id="listBaseDepartmentDOByIdsArr" resultType="com.fjhcit.entity.BaseDepartmentDO" parameterType="java.util.Map">
+        select parent_id
+        from base_department where id in 
+        <foreach collection="idsArr" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by parent_id
+    </select>
+</mapper>

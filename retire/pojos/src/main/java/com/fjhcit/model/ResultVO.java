@@ -14,7 +14,6 @@ public class ResultVO implements Serializable {
 	private Object 	data; 		//返回数据
 	private boolean success; 	//操作是否成功
 	private String 	message; 	//提示信息
-	private boolean unique;
 	/**
 	 * 分页时才用到
 	 */

@@ -155,11 +155,13 @@ public class RetireContactController{
 	public void excelRetireContactStaff(HttpServletResponse response, @RequestParam Map<String, Object> param){
 		//1、查学历分类
     	Map<String,String> codeParam = new HashMap<String, String>();
-    	codeParam.put("parent_id", ParentIdContant.BASE_CODE_EDUCATION);
-    	codeParam.put("is_available", "1");
+    	codeParam.put("code",ParentIdContant.BASE_CODE_EDUCATION);
+    	//codeParam.put("parent_id", ParentIdContant.BASE_CODE_EDUCATION);
+    	//codeParam.put("is_available", "1");
     	ResultVO  educationVO = this.feignZuulServer.getCode(codeParam);
     	@SuppressWarnings("unchecked")
-		List<LinkedHashMap<String,String>> educationList = (List<LinkedHashMap<String,String>>)educationVO.getData();
+		Map<String,List<LinkedHashMap<String,String>>> dataMap = (Map<String, List<LinkedHashMap<String, String>>>) educationVO.getData();
+		List<LinkedHashMap<String,String>> educationList=dataMap.get(ParentIdContant.BASE_CODE_EDUCATION);
     	//2、导出Excel
     	ExcelVO excelVO = new ExcelVO();
     	excelVO.setSheetName("离退休工作人员统计");
@@ -177,7 +179,7 @@ public class RetireContactController{
     	tableHeadArr2[1] = "";
     	tableHeadArr2[2] = "";
     	String[] dataFieldArr = new String[educationList.size() + 9];
-    	dataFieldArr[0] = "CODE_NAME";
+    	dataFieldArr[0] = "CODE_VAL";
     	dataFieldArr[1] = "SEQUENCE";
     	dataFieldArr[2] = "TOTAL";
     	for(int i=0;i<educationList.size();i++) {
@@ -186,8 +188,8 @@ public class RetireContactController{
     		if(i!=0) {
     			tableHeadArr1[i+3] = "";
     		}
-    		tableHeadArr2[i+3] = code.get("code_name");
-    		dataFieldArr[i+3] = "EDUCATION_" + code.get("id");
+    		tableHeadArr2[i+3] = code.get("name");
+    		dataFieldArr[i+3] = "EDUCATION_" + code.get("value").toUpperCase();
     	}
     	columnWidthArr[educationList.size()+3] = 11;
     	columnWidthArr[educationList.size()+4] = 11;

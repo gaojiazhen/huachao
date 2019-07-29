@@ -869,11 +869,6 @@ public class RetireUserController {
                 playARoleList.add(playARoles.get(i).get("value"));
             }
         }
-        //2、查数据字典_干部ID列表
-        //   Map<String,String> cadreParam = new HashMap<String, String>();
-        //   cadreParam.put("parent_id", ParentIdContant.BASE_CODE_NATURE);
-        //   cadreParam.put("special_mark", ParentIdContant.BASE_CODE_TYPE1_RETIRE);
-        // cadreParam.put("code_name", "干部");
         List<LinkedHashMap<String, String>> cadreIds = dataMap.get(ParentIdContant.BASE_CODE_NATURE);
         List cadreIdArray = new ArrayList();
         for (int i = 0; i < cadreIds.size(); i++) {

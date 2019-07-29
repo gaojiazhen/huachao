@@ -40,7 +40,7 @@ public class RetireArenaController{
 	@Autowired
 	private RetireArenaService		retireArenaService;  		//离（退）休人员_活动场所及老年大学建设情况统计表_业务接口
 	@Autowired
-	private FeignZuulServer 		feignZuulServer;			//远程调用其他组件接口
+	private FeignZuulServer  		feignZuulServer;			//远程调用其他组件接口
 
 	/**
 	 * @description 查离（退）休人员_活动场所及老年大学建设情况统计表列表数据

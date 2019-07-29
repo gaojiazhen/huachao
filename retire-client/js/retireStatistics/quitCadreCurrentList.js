@@ -54,7 +54,6 @@ layui.use(['form','layer','table','laytpl','common'],function(){
 				//3、构建动态表头及列表
 				userParam['unit_id'] = $("#unit_id").val();
 				common.ajax(listQuitCadreCurrentSituation, 'post', 'json', userParam , function (ures) {
-					console.log(ures)
 					var tableIns = table.render({
 						elem : '#userList',
 						data : ures.data,

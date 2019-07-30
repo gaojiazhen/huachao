@@ -503,16 +503,18 @@ public class RetireCostController {
     public void excelRetireDepartmentAndCost(HttpServletResponse response, @RequestParam Map<String, Object> param) {
         //1、查询行政区划类型
         Map<String, String> codeParam = new HashMap<String, String>();
-        codeParam.put("parent_id", ParentIdContant.BASE_CODE_ADMINISTRATIVE_DIVISION);
-        codeParam.put("is_available", "1");
+        codeParam.put("code", ParentIdContant.BASE_CODE_ADMINISTRATIVE_DIVISION+","+ParentIdContant.BASE_CODE_ORGANIZATION_TYPE);
+       // codeParam.put("is_available", "1");
         ResultVO divisionVO = this.feignZuulServer.getCode(codeParam);
         @SuppressWarnings("unchecked")
-        List<LinkedHashMap<String, String>> divisionList = (List<LinkedHashMap<String, String>>) divisionVO.getData();
+        Map<String,List<LinkedHashMap<String,String>>> dataMap = (Map<String, List<LinkedHashMap<String, String>>>) divisionVO.getData();
+        List<LinkedHashMap<String, String>> divisionList = dataMap.get(ParentIdContant.BASE_CODE_ADMINISTRATIVE_DIVISION);
         //2、查询机构类型
-        codeParam.put("parent_id", ParentIdContant.BASE_CODE_ORGANIZATION_TYPE);
-        ResultVO typeVO = this.feignZuulServer.getCode(codeParam);
-        @SuppressWarnings("unchecked")
-        List<LinkedHashMap<String, String>> typeList = (List<LinkedHashMap<String, String>>) typeVO.getData();
+        List<LinkedHashMap<String, String>> typeList = dataMap.get(ParentIdContant.BASE_CODE_ORGANIZATION_TYPE);
+        //   codeParam.put("parent_id", ParentIdContant.BASE_CODE_ORGANIZATION_TYPE);
+     //   ResultVO typeVO = this.feignZuulServer.getCode(codeParam);
+     //   @SuppressWarnings("unchecked")
+    //    List<LinkedHashMap<String, String>> typeList = (List<LinkedHashMap<String, String>>) typeVO.getData();
         param.put("divisionList", divisionList);
         param.put("typeList", typeList);
         ExcelVO excelVO = new ExcelVO();
@@ -546,10 +548,10 @@ public class RetireCostController {
                 independentCol += 1;
                 columnWidthArr[i + 2] = 8;
                 mergedRegionArr[i + 3] = "2,3," + (i * divisionCol + 2) + "," + (i * divisionCol + 2);
-                dataFieldArr[i + 2] = "DEPARTMENT_TYPE_" + divisionCodeDO.get("id");
-                tableHeadArr2[i + 2] = divisionCodeDO.get("code_name");
+                dataFieldArr[i + 2] = "DEP_TYPE_" + divisionCodeDO.get("value").toUpperCase();
+                tableHeadArr2[i + 2] = divisionCodeDO.get("name");
             } else {
-                tableHeadArr2[(i - independentCol) * typeList.size() + 3] = divisionCodeDO.get("code_name");
+                tableHeadArr2[(i - independentCol) * typeList.size() + 3] = divisionCodeDO.get("name");
                 mergedRegionArr[i + 3] = "2,2," + ((i - independentCol) * typeList.size() + 3) + "," + ((i - independentCol) * typeList.size() + 5);
                 for (int j = 0; j < typeList.size(); j++) {
                     LinkedHashMap<String, String> typeCodeDO = typeList.get(j);
@@ -558,8 +560,8 @@ public class RetireCostController {
                     if (i != 0) {
                         tableHeadArr2[i * typeList.size() + j + 2] = "";
                     }
-                    tableHeadArr3[divisionCol * typeList.size() + j + 3] = typeCodeDO.get("code_name");
-                    dataFieldArr[divisionCol * typeList.size() + j + 3] = "DEPARTMENT_TYPE_" + divisionCodeDO.get("id") + "_" + typeCodeDO.get("id");
+                    tableHeadArr3[divisionCol * typeList.size() + j + 3] = typeCodeDO.get("name");
+                    dataFieldArr[divisionCol * typeList.size() + j + 3] = "DEP_TYPE_" + divisionCodeDO.get("value").toUpperCase() + "_" + typeCodeDO.get("value").toUpperCase();
                 }
                 divisionCol += 1;
             }

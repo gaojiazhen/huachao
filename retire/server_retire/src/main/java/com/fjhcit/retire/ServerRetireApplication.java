@@ -20,12 +20,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan(value = "com.fjhcit.retire.dao")
 @ComponentScan("com.*")
 public class ServerRetireApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ServerRetireApplication.class, args);
         //SpringApplication springApplication = new SpringApplication(ServerRetireApplication.class);
         //springApplication.setBannerMode(Banner.Mode.CONSOLE);
         //springApplication.run(args);
     }
-    
 }

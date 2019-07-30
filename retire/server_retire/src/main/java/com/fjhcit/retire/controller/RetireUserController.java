@@ -1263,7 +1263,12 @@ public class RetireUserController {
 //    	codeParam.put("is_available", "1");
         ResultVO listVO = this.feignZuulServer.getCode(codeParam);
         @SuppressWarnings("unchecked")
-        List<LinkedHashMap<String, String>> list = (List<LinkedHashMap<String, String>>) listVO.getData();
+        Map<String,List<LinkedHashMap<String,String>>> dataMap = (Map<String, List<LinkedHashMap<String, String>>>) listVO.getData();
+        List<LinkedHashMap<String, String>> linkedHashMaps = dataMap.get(ParentIdContant.BASE_CODE_RETIREMENT_RANK);
+        List list=new ArrayList();
+        for (int i = 0; i < linkedHashMaps.size(); i++) {
+            list.add(linkedHashMaps.get(i).get("value"));
+        }
         param.put("list", list);
         //查单位条数，计算表格内容跨行
         Map<String, String> departmentParam = new HashMap<String, String>();
@@ -1342,8 +1347,8 @@ public class RetireUserController {
             if (i != 0) {
                 tableHeadArr1[i + 13] = "";
             }
-            tableHeadArr2[i + 13] = list.get(i).get("code_val");
-            dataFieldArr[i + 13] = "RETIREMENT_RANK_ID_" + list.get(i).get("id");
+            tableHeadArr2[i + 13] = linkedHashMaps.get(i).get("name");
+            dataFieldArr[i + 13] = "RETIREMENT_RANK_ID_" + linkedHashMaps.get(i).get("value").toUpperCase();
             columnWidthArr[i + 13] = 10;
         }
         excelVO.setTitleName("退休人员基本情况统计");
@@ -1419,8 +1424,13 @@ public class RetireUserController {
 //    	receiveParam.put("is_available", "1");
         ResultVO locatedVO = this.feignZuulServer.getCode(receiveParam);
         @SuppressWarnings("unchecked")
-        List<LinkedHashMap<String, String>> locatedList = (List<LinkedHashMap<String, String>>) locatedVO.getData();
-        param.put("locatedList", locatedList);
+        Map<String,List<LinkedHashMap<String,String>>> dataMap = (Map<String, List<LinkedHashMap<String, String>>>) locatedVO.getData();
+        List<LinkedHashMap<String, String>> locatedList = dataMap.get(ParentIdContant.BASE_CODE_RECEIVE_AREA);
+        List list=new ArrayList();
+        for (int i = 0; i < locatedList.size(); i++) {
+            list.add(locatedList.get(i).get("value"));
+        }
+        param.put("locatedList", list);
         //2、导出Excel
         ExcelVO excelVO = new ExcelVO();
         excelVO.setSheetName("退休人员个人信息明细表");
@@ -1523,8 +1533,8 @@ public class RetireUserController {
         dataFieldArr[17] = "RESIDENCE_ADDRESS";
         for (int i = 0; i < locatedList.size(); i++) {
             LinkedHashMap<String, String> codeDO = locatedList.get(i);
-            tableHeadArr4[18 + i] = codeDO.get("code_val");
-            dataFieldArr[18 + i] = "AREA_ADDRESS_" + codeDO.get("id");
+            tableHeadArr4[18 + i] = codeDO.get("name");
+            dataFieldArr[18 + i] = "AREA_ADDRESS_" + codeDO.get("value").toUpperCase();
         }
         tableHeadArr4[28 + locatedList.size()] = "姓名";
         tableHeadArr4[29 + locatedList.size()] = "关系";
